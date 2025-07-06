@@ -1,0 +1,27 @@
+import React, { useEffect, useState } from "react";
+import ChatBox from "../components/veloxChat/ChatBox";
+import { HiMenuAlt3 } from "react-icons/hi";
+import ContactsPanel from "../components/veloxChat/ContactPanel";
+
+const Home = () => {
+  const [isSideOpen, setIsSideOpen] = useState(false);
+
+  return (
+    <div className="flex w-full  h-screen">
+      <div className="md:w-1/3 lg:w-1/4 border-r border-border">
+        <div
+          className="z-[100] text-[27px] absolute top-4 right-2 text-gray-600 md:hidden "
+          onClick={() => setIsSideOpen(!isSideOpen)}
+        >
+          <HiMenuAlt3 />
+        </div>
+        <ContactsPanel isSideOpen={isSideOpen} setSideOpen={setIsSideOpen} />
+      </div>
+      <div className="grow ">
+        <ChatBox />
+      </div>
+    </div>
+  );
+};
+
+export default Home;

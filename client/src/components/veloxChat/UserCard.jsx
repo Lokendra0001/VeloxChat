@@ -1,0 +1,83 @@
+import React, { useEffect, useState, useRef } from "react";
+import { MoreVertical } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { addselectedFriend } from "../../store/slices/selectedFriendSlice";
+
+const UserCard = ({ user, setSideOpen }) => {
+  const dispatch = useDispatch();
+
+  return (
+    <div
+      className=" flex p-2 ml-1 cursor-pointer"
+      onClick={() => {
+        dispatch(addselectedFriend(user));
+        setSideOpen?.(false);
+      }}
+    >
+      {/* User ProfilePic */}
+      <div className="h-10 w-10 relative grid place-items-center overflow-hidden">
+        <img
+          src={user.profilePic}
+          alt="User Img"
+          className="h-full w-full rounded-full object-cover"
+        />
+
+        {/* Status Dot */}
+        <div
+          className={`absolute bottom-1 right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white ${
+            user.status == "online"
+              ? "bg-green-500"
+              : user.status == "recent"
+              ? "bg-yellow-500"
+              : "hidden"
+          } shadow-sm`}
+        />
+      </div>
+
+      {/* User Name & Status & More Vertical Icon */}
+      <div className="ml-4 flex-1 flex items-center justify-between w-full">
+        <div>
+          <h2 className="text-gray-900 font-semibold">{user?.username}</h2>
+          <p
+            className={`text-sm ${
+              user.status === "online"
+                ? "text-green-600"
+                : user.status === "recent"
+                ? "text-yellow-500"
+                : "hidden"
+            }`}
+          >
+            {user.status}
+          </p>
+        </div>
+
+        {/* More Vertical Icon */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            // handleDropdownToggle(index);
+          }}
+          className="relative "
+        >
+          <MoreVertical
+            className="text-gray-400 cursor-pointer hover:text-teal-800"
+            size={17}
+          />
+          {/* <div
+                    className={`absolute right-2 ${
+                      openId === index ? "block" : "hidden"
+                    }`}
+                  >
+                    {["HELLO", "RAKESH", "WORLD"].map((text) => (
+                      <p key={text} className="p-1 border border-gray-300">
+                        {text}
+                      </p>
+                    ))}
+                  </div> */}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default UserCard;

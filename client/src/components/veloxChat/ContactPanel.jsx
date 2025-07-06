@@ -1,0 +1,243 @@
+import React, { useState, useEffect } from "react";
+import { User, Search, Plus, Bell } from "lucide-react";
+import UserCard from "./UserCard";
+import AddContact from "./AddContact";
+import Header from "../common/Header";
+import logo from "../../assets/logoPng.png";
+import serverObj from "../../config/config";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink } from "react-router-dom";
+import socket from "../../config/socket";
+import { addselectedFriend } from "../../store/slices/selectedFriendSlice";
+import { handleErrorMsg, handleSuccessMsg } from "../../config/toast";
+
+function ContactsPanel({ isSideOpen, setSideOpen }) {
+  const [friends, setFriends] = useState([]);
+  const [filteredFriends, setFilteredFriends] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [showAddContact, setShowAddContact] = useState(false);
+  const [notify, setNotify] = useState(false);
+  const apiKey = serverObj.apikey;
+  const loggedInUser = useSelector((state) => state.auth.user);
+  const [newMsg, setNewMsg] = useState(false);
+
+  const dispatch = useDispatch();
+  const selectedFriend = useSelector(
+    (state) => state.selectedFriend.selectedFriend
+  );
+
+  // Fetch friend list from server
+  const fetchFriends = async () => {
+    try {
+      const res = await axios.get(`${apiKey}/user/getAllFriends`, {
+        withCredentials: true,
+      });
+      const fetchedFriends = res.data.friends || [];
+      setFriends(fetchedFriends);
+      setFilteredFriends(fetchedFriends);
+    } catch (err) {
+      handleErrorMsg(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFriends();
+
+    const handleIncomingRequest = () => setNotify(true);
+
+    const handleAddAcceptedRequestFriend = (friend) => {
+      const isAlreadyFriend = friends.find((user) => user._id === friend._id);
+      if (isAlreadyFriend) return;
+      // setFriends((prev) => [...prev, { ...friend }]);
+      handleSuccessMsg(`${friend.username} accepted your request.`);
+    };
+
+    const handleUserOffline = (userId) => {
+      setFriends((prev) => {
+        const updatedList = prev.map((friend) =>
+          friend._id === userId ? { ...friend, status: "offline" } : friend
+        );
+
+        // defer dispatch to useEffect
+        const matched = updatedList.find((f) => f._id === selectedFriend?._id);
+        if (matched) {
+          setTimeout(() => {
+            dispatch(addselectedFriend(matched));
+          }, 0);
+        }
+
+        return updatedList;
+      });
+    };
+
+    const handleUserOnline = (userId) => {
+      setFriends((prev) => {
+        const updatedList = prev.map((friend) =>
+          friend._id === userId ? { ...friend, status: "online" } : friend
+        );
+
+        // defer dispatch to useEffect
+        const matched = updatedList.find((f) => f._id === selectedFriend?._id);
+        if (matched) {
+          setTimeout(() => {
+            dispatch(addselectedFriend(matched));
+          }, 0);
+        }
+
+        return updatedList;
+      });
+    };
+
+    socket.on("received-request", handleIncomingRequest);
+    socket.on("addFriend-contactPanel", handleAddAcceptedRequestFriend);
+    socket.on("user-offline", handleUserOffline);
+    socket.on("user-online", handleUserOnline);
+
+    return () => {
+      socket.off("received-request", handleIncomingRequest);
+      socket.on("addFriend-contactPanel", handleAddAcceptedRequestFriend);
+      socket.off("user-offline", handleUserOffline);
+    };
+  }, []);
+
+  // Filter friends based on search term
+  useEffect(() => {
+    const result = friends.filter((user) =>
+      user.username.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredFriends(result);
+  }, [searchTerm, friends]);
+
+  return (
+    <>
+      <div
+        className={`max-w-md mx-auto bg-white h-screen md:flex flex-col shadow-lg overflow-hidden absolute md:right-0 w-full z-50 md:relative ${
+          isSideOpen ? "right-0" : "right-full"
+        }`}
+      >
+        {/* Top Header */}
+        <Header onAddContact={setShowAddContact} />
+
+        {/* Search Bar */}
+        <div className="px-2 mt-2 bg-gray-50">
+          <div className="relative flex w-full border border-gray-300 rounded-lg bg-white px-4 py-1">
+            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              className="block w-full pr-3 py-1 outline-none sm:text-sm bg-transparent placeholder-gray-500"
+              placeholder="Search contacts..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Friend List */}
+        <div className="h-[70dvh] mt-3 overflow-y-auto">
+          {isLoading ? (
+            // Skeleton loader for UI feedback
+            Array.from({ length: 5 }).map((_, index) => (
+              <div key={index} className="p-4 flex items-center animate-pulse">
+                <div className="w-12 h-12 rounded-full bg-gray-300"></div>
+                <div className="ml-4 flex-1 space-y-2">
+                  <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                  <div className="h-3 bg-zinc-300 rounded w-1/3"></div>
+                </div>
+              </div>
+            ))
+          ) : filteredFriends.length > 0 ? (
+            filteredFriends.map((user, index) => (
+              <UserCard
+                key={user._id || index}
+                user={user}
+                setSideOpen={setSideOpen}
+              />
+            ))
+          ) : (
+            // Empty state view
+            <div className="flex flex-col items-center justify-center p-8 text-center">
+              <div className="w-24 h-24 bg-other-bubble rounded-full flex items-center justify-center mb-4">
+                <User className="w-12 h-12 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-1">
+                {searchTerm ? "No results found" : "No contacts"}
+              </h3>
+              <p className="text-gray-500">
+                {searchTerm
+                  ? "Try a different search term"
+                  : "Add new contacts to get started"}
+              </p>
+              {!searchTerm && (
+                <button
+                  className="mt-4 px-2 py-1.5 bg-primary text-white rounded hover:bg-primary-hover cursor-pointer transition flex items-center"
+                  onClick={() => setShowAddContact(true)}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Contact
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Footer with Profile & Notifications */}
+        <div className="flex-1 py-1 h-14 flex justify-between px-4 items-center border-t border-gray-300 bg-white">
+          {/* User Info */}
+          <div className="flex gap-3 items-center">
+            <img
+              src={loggedInUser?.profilePic}
+              alt={loggedInUser?.username || "User"}
+              className="h-9 w-9 rounded-full object-cover border border-gray-200"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "default-profile.png";
+              }}
+            />
+            <div className="flex flex-col">
+              <h1 className="text-sm font-medium text-gray-800 -mb-0.5 truncate max-w-[120px]">
+                {loggedInUser?.username || "Guest"}
+              </h1>
+              <NavLink
+                to="/profile"
+                className="text-xs text-gray-500 hover:text-primary-hover transition-colors duration-200"
+              >
+                View Profile
+              </NavLink>
+            </div>
+          </div>
+
+          {/* Notification Icon */}
+          <NavLink
+            to="/notification"
+            className="p-2 rounded-full hover:bg-teal-100 transition-colors duration-200 relative"
+            title="Notifications"
+          >
+            <Bell size={20} className="text-gray-600" />
+            {notify && (
+              <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+            )}
+          </NavLink>
+        </div>
+      </div>
+
+      {/* Add Contact Modal */}
+      {showAddContact && (
+        <div className="w-full absolute top-0 h-full backdrop-blur-[1px] z-[100] grid place-items-center">
+          <AddContact onCloseAddContact={setShowAddContact} />
+          <div
+            className="bg-black/20 absolute inset-0 -z-4"
+            onClick={() => setShowAddContact(false)}
+          />
+        </div>
+      )}
+    </>
+  );
+}
+
+export default ContactsPanel;

@@ -57,9 +57,9 @@ router.get('/signout', async (req, res) => {
     try {
 
         res.clearCookie("z_tk_rj_91RkXz", {
-            httpOnly: true,      // ✅ protect from client-side JS
-            secure: false,       // ❌ don't enforce HTTPS in dev
-            sameSite: "lax",     // ✅ allows form submissions & most CSRF protection
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
 

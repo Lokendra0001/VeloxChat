@@ -4,10 +4,13 @@ const Users = require('../models/user-model');
 
 const userSocketMap = {};
 
+const allowedOrigin = ["http://localhost:5173", "https://veloxchat.vercel.app"]
+
+
 const setUpSocket = (server) => {
     const io = new Server(server, {
         cors: {
-            origin: "http://localhost:5173",
+            origin: allowedOrigin,
             credentials: true,
         },
     });

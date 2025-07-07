@@ -217,7 +217,7 @@ function ChatBox() {
             {messages.map((msg, index) => (
               <div
                 key={msg._id || index}
-                className={`flex  mt-2 ${
+                className={`flex  mt-5 ${
                   msg.sender_id === loggedInUser._id
                     ? "justify-end"
                     : "justify-start"

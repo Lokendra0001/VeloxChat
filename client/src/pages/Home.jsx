@@ -7,7 +7,7 @@ const Home = () => {
   const [isSideOpen, setIsSideOpen] = useState(false);
 
   return (
-    <div className="flex w-full h-[100dvh] relative">
+    <div className="flex w-full h-[100dvh] relative overflow-hidden">
       {/* Toggle Button */}
       <div
         className="z-[100] text-[27px] fixed top-5.5 right-3 text-gray-600 md:hidden"

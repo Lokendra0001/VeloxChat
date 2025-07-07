@@ -9,14 +9,17 @@ import socket from "../config/socket";
 const NotifcationPage = () => {
   const loggedInUser = useSelector((state) => state.auth.user);
   const [friendRequests, setFriendRequests] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const handleGetAllRequests = () => {
+    setLoading(true);
     axios
       .get(`${serverObj.apikey}/contact/requests/${loggedInUser._id}`, {
         withCredentials: true,
       })
       .then((res) => setFriendRequests(res.data))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -95,7 +98,11 @@ const NotifcationPage = () => {
         <ChevronLeft /> <span>Back</span>
       </div>
 
-      {friendRequests.length === 0 ? (
+      {loading ? (
+        <div class="flex items-center justify-center mt-10 ">
+          <div class="w-8 h-8 border-4 border-teal-400 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : friendRequests.length === 0 ? (
         <p className="text-gray-500 text-center">No pending requests</p>
       ) : (
         <div className="space-y-4">

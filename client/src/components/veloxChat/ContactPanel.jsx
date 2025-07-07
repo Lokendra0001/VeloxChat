@@ -52,7 +52,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
     const handleAddAcceptedRequestFriend = (friend) => {
       const isAlreadyFriend = friends.find((user) => user._id === friend._id);
       if (isAlreadyFriend) return;
-      // setFriends((prev) => [...prev, { ...friend }]);
+      setFriends((prev) => [...prev, { ...friend }]);
       handleSuccessMsg(`${friend.username} accepted your request.`);
     };
 
@@ -115,7 +115,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
   return (
     <>
       <div
-        className={`max-w-md mx-auto bg-white h-screen md:flex flex-col shadow-lg overflow-hidden absolute md:right-0 w-full z-50 md:relative ${
+        className={`max-w-md border-l border-gray-300  mx-auto bg-white h-screen md:flex flex-col shadow-lg overflow-hidden absolute md:right-0 w-full z-[90] md:relative ${
           isSideOpen ? "right-0" : "right-full"
         }`}
       >

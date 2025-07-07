@@ -162,9 +162,9 @@ function ChatBox() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col bg-white">
+    <div className="w-full h-screen flex flex-col bg-white">
       {/* Header */}
-      <div className="sticky top-0 flex items-center justify-between bg-white h-[10dvh] p-3 border-b border-gray-300 ">
+      <div className="sticky top-0 flex items-center justify-between bg-white z-50 h-[10dvh] p-3 border-b border-gray-300 ">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-full overflow-hidden shadow-md border border-gray-300">
             <img
@@ -197,7 +197,7 @@ function ChatBox() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto py-2 px-4  bg-teal-50 ">
+      <div className="flex-1 overflow-y-auto py-2 px-4 z-40 bg-teal-50 ">
         {loading ? (
           <div className="flex justify-center items-center h-full">
             <span className="text-sm text-gray-500">Loading messages...</span>

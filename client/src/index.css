@@ -35,15 +35,6 @@
 
 }
 
-html,
-body,
-#root {
-  height: 100%;
-  overflow: hidden;
-  overscroll-behavior: contain;
-  /* Prevents pull-to-refresh */
-}
-
 
 @keyframes float {
   from {

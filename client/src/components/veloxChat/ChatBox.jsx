@@ -133,7 +133,7 @@ function ChatBox() {
     return (
       <div className="h-[100dvh] w-full flex flex-col justify-center items-center bg-gradient-to-br from-gray-50 to-white">
         <div className="relative mb-10">
-          <div className="absolute -inset-4 bg-teal-100/40 blur-xl rounded-full" />
+          <div className="absolute -inset-4 bg-teal-100/10 blur-xl rounded-full" />
           <div className="relative w-28 h-28 flex items-center justify-center rounded-full shadow-lg">
             <MessagesSquareIcon className="w-14 h-14 text-primary" />
           </div>

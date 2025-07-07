@@ -52,8 +52,6 @@ const Profile = () => {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(user);
-        console.log(res.data.user);
         handleSuccessMsg(res.data.message);
         dispatch(addUser(res.data.user));
       })

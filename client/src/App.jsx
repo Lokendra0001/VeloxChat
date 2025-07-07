@@ -29,18 +29,18 @@ const App = () => {
     axios
       .get(`${serverObj.apikey}/user/getCurrentUser`, { withCredentials: true })
       .then((res) => {
-        dispatch(addUser({...res.data, status : "online"}));
+        dispatch(addUser({ ...res.data, status: "online" }));
         toast(`Welcome Back ${res.data.username}`, {
           icon: "👏",
         });
       })
       .catch((err) => console.log(err.response.message))
-      .finally(() => setLoading(false));
+      .finally(() => setTimeout(() => setLoading(false), 2000));
   }, []);
 
   if (loading)
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-200">
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-teal-50">
         {/* Animated Logo Container */}
         <div className="relative mb-6 w-32 h-32">
           {/* Glow Effect */}

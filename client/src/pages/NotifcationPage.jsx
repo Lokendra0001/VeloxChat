@@ -5,6 +5,7 @@ import serverObj from "../config/config";
 import { User, Check, X, ChevronLeft } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import socket from "../config/socket";
+import { handleSuccessMsg } from "../config/toast";
 
 const NotifcationPage = () => {
   const loggedInUser = useSelector((state) => state.auth.user);
@@ -46,7 +47,7 @@ const NotifcationPage = () => {
         { withCredentials: true }
       )
       .then((res) => {
-        console.log("Friend Added!");
+        handleSuccessMsg("Friend Added!");
       })
       .catch((err) => console.log(err));
   };

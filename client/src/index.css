@@ -2,94 +2,151 @@
 
 @theme {
 
-    --color-primary: #0D9488;
-    /* Teal 600 */
-    --color-primary-hover: #0F766E;
-    /* Teal 700 */
-    --color-secondary: #E0F2F1;
-    /* Soft background/cards */
+  --color-primary: #0D9488;
+  /* Teal 600 */
+  --color-primary-hover: #0F766E;
+  /* Teal 700 */
+  --color-secondary: #E0F2F1;
+  /* Soft background/cards */
 
-    --color-background: #F9FAFB;
-    /* Main background */
-    --color-user-bubble: #C6F6D5;
-    /* Sender's message (Green 150) */
-    --color-other-bubble: #E0E7FF;
-    /* Receiver's message (Indigo 100) */
+  --color-background: #F9FAFB;
+  /* Main background */
+  --color-user-bubble: #C6F6D5;
+  /* Sender's message (Green 150) */
+  --color-other-bubble: #E0E7FF;
+  /* Receiver's message (Indigo 100) */
 
-    --color-text-primary: #1F2937;
-    /* Strong readable text (Gray 800) */
-    --color-text-secondary: #6B7280;
-    /* Subtext/placeholder (Gray 500) */
+  --color-text-primary: #1F2937;
+  /* Strong readable text (Gray 800) */
+  --color-text-secondary: #6B7280;
+  /* Subtext/placeholder (Gray 500) */
 
-    --color-border: #E5E7EB;
-    /* Divider, outlines (Gray 200) */
+  --color-border: #E5E7EB;
+  /* Divider, outlines (Gray 200) */
 
-    --color-light-border: #F3F4F6;
-    /* Tailwind gray-100 */
+  --color-light-border: #F3F4F6;
+  /* Tailwind gray-100 */
 
 
-    --color-success: #10B981;
-    /* Accepted state (Green 500) */
-    --color-danger: #EF4444;
-    /* Delete/Reject (Red 500) */
+  --color-success: #10B981;
+  /* Accepted state (Green 500) */
+  --color-danger: #EF4444;
+  /* Delete/Reject (Red 500) */
 
 }
 
-@keyframes float {
-    from {
-        transform: translateY(20px);
-        opacity: 0.2;
-    }
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  /* Prevents pull-to-refresh */
+}
 
-    to {
-        transform: translateY(0);
-        opacity: 0.5;
-    }
+
+@keyframes float {
+  from {
+    transform: translateY(20px);
+    opacity: 0.2;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
 }
 
 .animate-float {
-    animation: float 2s linear infinite alternate;
+  animation: float 2s linear infinite alternate;
 }
 
- @keyframes rotate-cw {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+@keyframes rotate-cw {
+  from {
+    transform: rotate(0deg);
   }
-  @keyframes rotate-ccw {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(-360deg); }
+
+  to {
+    transform: rotate(360deg);
   }
-  @keyframes progress-load {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+}
+
+@keyframes rotate-ccw {
+  from {
+    transform: rotate(0deg);
   }
-  @keyframes bounce-delay-1 {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+
+  to {
+    transform: rotate(-360deg);
   }
-  @keyframes bounce-delay-2 {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+}
+
+@keyframes progress-load {
+  0% {
+    transform: translateX(-100%);
   }
-  @keyframes bounce-delay-3 {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+
+  100% {
+    transform: translateX(100%);
   }
-  .animate-rotate-cw {
-    animation: rotate-cw 2s linear infinite;
+}
+
+@keyframes bounce-delay-1 {
+
+  0%,
+  100% {
+    transform: translateY(0);
   }
-  .animate-rotate-ccw {
-    animation: rotate-ccw 1.8s linear infinite;
+
+  50% {
+    transform: translateY(-6px);
   }
-  .animate-progress-load {
-    animation: progress-load 2s ease-in-out infinite;
+}
+
+@keyframes bounce-delay-2 {
+
+  0%,
+  100% {
+    transform: translateY(0);
   }
-  .animate-bounce-delay-1 {
-    animation: bounce-delay-1 1.4s infinite;
+
+  50% {
+    transform: translateY(-6px);
   }
-  .animate-bounce-delay-2 {
-    animation: bounce-delay-2 1.4s infinite 0.2s;
+}
+
+@keyframes bounce-delay-3 {
+
+  0%,
+  100% {
+    transform: translateY(0);
   }
-  .animate-bounce-delay-3 {
-    animation: bounce-delay-3 1.4s infinite 0.4s;
+
+  50% {
+    transform: translateY(-6px);
   }
+}
+
+.animate-rotate-cw {
+  animation: rotate-cw 2s linear infinite;
+}
+
+.animate-rotate-ccw {
+  animation: rotate-ccw 1.8s linear infinite;
+}
+
+.animate-progress-load {
+  animation: progress-load 2s ease-in-out infinite;
+}
+
+.animate-bounce-delay-1 {
+  animation: bounce-delay-1 1.4s infinite;
+}
+
+.animate-bounce-delay-2 {
+  animation: bounce-delay-2 1.4s infinite 0.2s;
+}
+
+.animate-bounce-delay-3 {
+  animation: bounce-delay-3 1.4s infinite 0.4s;
+}

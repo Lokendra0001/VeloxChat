@@ -37,7 +37,6 @@ const AddContact = ({ status, onCloseAddContact }) => {
 
   // Send a friend request and emit socket event only after success
   const handleSendRequest = async (toUserId, user) => {
-    console.log(user);
     try {
       const res = await axios.post(
         `${apiKey}/contact/send`,
@@ -171,7 +170,6 @@ const AddContact = ({ status, onCloseAddContact }) => {
           filteredUsers.map((user, index) => {
             const isSent = handleCheckIsSend(user);
             const isAccepted = handleCheckStatus(user);
-            console.log(isSent);
             return (
               <div
                 key={user._id || index}

@@ -49,7 +49,6 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
     const handleIncomingRequest = () => setNotify(true);
 
     const handleAddAcceptedRequestFriend = (friend) => {
-      console.log(friend);
       const isAlreadyFriend = friends.find((user) => user._id === friend._id);
       if (isAlreadyFriend) return;
       const updatedFriends = [...friends, { ...friend }];
@@ -113,15 +112,14 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
       user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredFriends(result);
-    console.log(friends);
   }, [searchTerm, friends]);
 
   return (
     <>
       <div
-        className={`max-w-md border-l border-gray-300  mx-auto bg-white h-full md:flex flex-col shadow-lg overflow-hidden absolute md:right-0 w-full z-[90] md:relative ${
-          isSideOpen ? "right-0" : "right-full"
-        }`}
+        className={`max-w-md border-l border-gray-300  mx-auto bg-white h-full md:flex flex-col shadow-lg overflow-hidden absolute  w-full z-[90] md:relative  transition-all ${
+          isSideOpen ? "left-0" : "left-full"
+        } md:left-0`}
       >
         {/* Top Header */}
         <Header onAddContact={setShowAddContact} />

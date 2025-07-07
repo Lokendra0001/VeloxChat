@@ -7,18 +7,22 @@ const Home = () => {
   const [isSideOpen, setIsSideOpen] = useState(false);
 
   return (
-    <div className="flex w-full  h-[100dvh]">
-      <div className="md:w-1/3 lg:w-1/4 border-r border-border">
-        <div
-          className="z-[100] text-[27px] fixed top-5 right-3 text-gray-600 md:hidden"
-          onClick={() => setIsSideOpen(!isSideOpen)}
-        >
-          <HiMenuAlt3 />
-        </div>
+    <div className="flex w-full h-[100dvh] relative">
+      {/* Toggle Button */}
+      <div
+        className="z-[100] text-[27px] fixed top-5.5 right-3 text-gray-600 md:hidden"
+        onClick={() => setIsSideOpen(!isSideOpen)}
+      >
+        <HiMenuAlt3 />
+      </div>
 
+      {/* Sidebar */}
+      <div className="md:w-1/3 lg:w-1/4 border-r border-border h-full">
         <ContactsPanel isSideOpen={isSideOpen} setSideOpen={setIsSideOpen} />
       </div>
-      <div className="grow overflow-hidden">
+
+      {/* Chat area */}
+      <div className="grow overflow-hidden min-w-0">
         <ChatBox />
       </div>
     </div>

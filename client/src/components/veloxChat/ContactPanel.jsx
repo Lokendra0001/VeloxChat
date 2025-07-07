@@ -119,7 +119,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
   return (
     <>
       <div
-        className={`max-w-md border-l border-gray-300  mx-auto bg-white h-screen md:flex flex-col shadow-lg overflow-hidden absolute md:right-0 w-full z-[90] md:relative ${
+        className={`max-w-md border-l border-gray-300  mx-auto bg-white h-full md:flex flex-col shadow-lg overflow-hidden absolute md:right-0 w-full z-[90] md:relative ${
           isSideOpen ? "right-0" : "right-full"
         }`}
       >
@@ -198,10 +198,6 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
               src={loggedInUser?.profilePic}
               alt={loggedInUser?.username || "User"}
               className="h-9 w-9 rounded-full object-cover border border-gray-200"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "default-profile.png";
-              }}
             />
             <div className="flex flex-col">
               <h1 className="text-sm font-medium text-gray-800 -mb-0.5 truncate max-w-[120px]">

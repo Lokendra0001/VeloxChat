@@ -162,7 +162,7 @@ function ChatBox() {
   }
 
   return (
-    <div className="w-full min-h-[100dvh] flex flex-col bg-white">
+    <div className="w-full h-[100dvh] flex flex-col bg-white">
       {/* Header */}
       <div className="sticky top-0 flex items-center justify-between bg-gray-50 z-50 h-[10dvh] p-3 border-b border-gray-300 ">
         <div className="flex items-center space-x-3">
@@ -316,7 +316,7 @@ function ChatBox() {
             autoComplete="off"
             autoCapitalize="sentences"
             autoFocus={true}
-            className="flex-1 border border-gray-300 rounded-lg py-2 px-4 sm:pr-12 focus:outline-none"
+            className="flex-1 border border-gray-300 bg-white rounded-lg py-2 px-4 sm:pr-12 focus:outline-none"
             {...register("message", { required: "Message is required" })}
             onChange={(e) => {
               handleTyping(selectedFriend._id, e.target.value.length);

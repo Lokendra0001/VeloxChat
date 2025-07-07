@@ -35,11 +35,7 @@ const App = () => {
         });
       })
       .catch((err) => console.log(err.response.message))
-      .finally(() =>
-        setTimeout(() => {
-          setLoading(false);
-        }, 2000)
-      );
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading)
@@ -61,7 +57,7 @@ const App = () => {
           {/* Center Brand Mark */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-12 h-12 p-1 bg-teal-600 text-white rounded-full flex items-center justify-center shadow-inner">
-             <MessageCircleMore />
+              <MessageCircleMore />
             </div>
           </div>
         </div>

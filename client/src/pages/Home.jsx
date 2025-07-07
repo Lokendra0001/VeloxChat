@@ -10,14 +10,15 @@ const Home = () => {
     <div className="flex w-full  h-screen">
       <div className="md:w-1/3 lg:w-1/4 border-r border-border">
         <div
-          className="z-[100] text-[27px] absolute top-4 right-2 text-gray-600 md:hidden "
+          className="z-[100] text-[27px] fixed top-5 right-3 text-gray-600 md:hidden"
           onClick={() => setIsSideOpen(!isSideOpen)}
         >
           <HiMenuAlt3 />
         </div>
+
         <ContactsPanel isSideOpen={isSideOpen} setSideOpen={setIsSideOpen} />
       </div>
-      <div className="grow ">
+      <div className="grow overflow-hidden">
         <ChatBox />
       </div>
     </div>

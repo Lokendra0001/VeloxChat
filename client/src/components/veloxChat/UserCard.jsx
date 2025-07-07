@@ -19,12 +19,12 @@ const UserCard = ({ user, setSideOpen }) => {
         <img
           src={user.profilePic}
           alt="User Img"
-          className="h-full w-full rounded-full object-cover"
+          className="h-full w-full rounded-full object-cover overflow-hidden"
         />
 
         {/* Status Dot */}
         <div
-          className={`absolute bottom-1 right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white ${
+          className={`absolute bottom-0.5 right-0 h-2.5 w-2.5 rounded-full border-2 border-white ${
             user.status == "online"
               ? "bg-green-500"
               : user.status == "recent"

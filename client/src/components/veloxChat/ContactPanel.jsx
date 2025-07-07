@@ -21,7 +21,6 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
   const [notify, setNotify] = useState(false);
   const apiKey = serverObj.apikey;
   const loggedInUser = useSelector((state) => state.auth.user);
-  const [newMsg, setNewMsg] = useState(false);
 
   const dispatch = useDispatch();
   const selectedFriend = useSelector(
@@ -50,6 +49,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
     const handleIncomingRequest = () => setNotify(true);
 
     const handleAddAcceptedRequestFriend = (friend) => {
+      console.log(friend);
       const isAlreadyFriend = friends.find((user) => user._id === friend._id);
       if (isAlreadyFriend) return;
       setFriends((prev) => [...prev, { ...friend }]);
@@ -62,12 +62,10 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
           friend._id === userId ? { ...friend, status: "offline" } : friend
         );
 
-        // defer dispatch to useEffect
+        // Dispatch to get the correct status online or offline in chatBox
         const matched = updatedList.find((f) => f._id === selectedFriend?._id);
         if (matched) {
-          setTimeout(() => {
-            dispatch(addselectedFriend(matched));
-          }, 0);
+          dispatch(addselectedFriend(matched));
         }
 
         return updatedList;
@@ -80,12 +78,10 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
           friend._id === userId ? { ...friend, status: "online" } : friend
         );
 
-        // defer dispatch to useEffect
+        // Dispatch to get the correct status online or offline in chatBox
         const matched = updatedList.find((f) => f._id === selectedFriend?._id);
         if (matched) {
-          setTimeout(() => {
-            dispatch(addselectedFriend(matched));
-          }, 0);
+          dispatch(addselectedFriend(matched));
         }
 
         return updatedList;
@@ -98,9 +94,12 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
     socket.on("user-online", handleUserOnline);
 
     return () => {
-      socket.off("received-request", handleIncomingRequest);
-      socket.on("addFriend-contactPanel", handleAddAcceptedRequestFriend);
-      socket.off("user-offline", handleUserOffline);
+      return () => {
+        socket.off("received-request", handleIncomingRequest);
+        socket.off("addFriend-contactPanel", handleAddAcceptedRequestFriend); // ✅ correct
+        socket.off("user-offline", handleUserOffline);
+        socket.off("user-online", handleUserOnline); // also add this
+      };
     };
   }, []);
 
@@ -110,6 +109,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
       user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredFriends(result);
+    console.log(friends);
   }, [searchTerm, friends]);
 
   return (
@@ -187,7 +187,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
         </div>
 
         {/* Footer with Profile & Notifications */}
-        <div className="flex-1 py-1 h-14 flex justify-between px-4 items-center border-t border-gray-300 bg-white">
+        <div className="grow py-1 h-14 flex justify-between px-4 items-center border-t border-gray-300 bg-white">
           {/* User Info */}
           <div className="flex gap-3 items-center">
             <img

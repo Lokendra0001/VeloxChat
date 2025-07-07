@@ -118,9 +118,8 @@ router.get("/getAllFriends", checkAuthentication, async (req, res) => {
 
 router.patch('/updateProfilePic', checkAuthentication, upload.single("profilePic"), async (req, res) => {
     try {
-        const user = await Users.findOneAndUpdate({ email: req.user.email }, { profilePic: req.file.path })
-        console.log(user)
-        res.status(200).json("Profile Updated")
+        const user = await Users.findOneAndUpdate({ email: req.user.email }, { profilePic: req.file.path }, { new: true })
+        res.status(200).json({ user, message: "Profile Updated" })
     } catch (error) {
         res.status(500).json(error.message)
     }

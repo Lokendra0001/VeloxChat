@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import serverObj from "../config/config";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
-import { removeUser } from "../store/slices/authSlice";
+import { addUser, removeUser } from "../store/slices/authSlice";
 import socket from "../config/socket";
 import { useForm } from "react-hook-form";
 import { handleSuccessMsg, handleErrorMsg } from "../config/toast";
@@ -23,6 +23,7 @@ const Profile = () => {
   const { register, handleSubmit, watch } = useForm();
   const [isAvator, setIsAvator] = useState(false);
   const profilePic = watch("newProfilePic");
+  const [loading, setLoading] = useState(false);
 
   const joinedDate = new Date(user.createdAt).toLocaleDateString("en-US", {
     year: "numeric",
@@ -39,19 +40,25 @@ const Profile = () => {
         socket.emit("logged-out");
         navigate("/auth");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => handleErrorMsg(err.message));
   };
 
   const changeProfilePic = (data) => {
+    setLoading(true);
     const formData = new FormData();
-    console.log(data);
     formData.append("profilePic", data.newProfilePic[0]);
     axios
       .patch(`${serverObj.apikey}/user/updateProfilePic`, formData, {
         withCredentials: true,
       })
-      .then((res) => console.log("updated"))
-      .catch((err) => console.log(err.message));
+      .then((res) => {
+        console.log(user);
+        console.log(res.data.user);
+        handleSuccessMsg(res.data.message);
+        dispatch(addUser(res.data.user));
+      })
+      .catch((err) => handleErrorMsg(err.message))
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -107,7 +114,7 @@ const Profile = () => {
                 className=" bg-primary text-sm cursor-pointer text-white tracking-wide mt-5 p-2 px-4 rounded-sm font-semibold"
                 type="submit"
               >
-                Update Avator
+                {loading ? "Updating..." : "Update Avator"}
               </button>
             )}
           </form>

@@ -12,7 +12,6 @@ import axios from "axios";
 import serverObj from "../../config/config";
 import { useSelector } from "react-redux";
 import socket from "../../config/socket";
-import { handleSuccessMsg } from "../../config/toast";
 
 const AddContact = ({ status, onCloseAddContact }) => {
   const [users, setUsers] = useState([]);

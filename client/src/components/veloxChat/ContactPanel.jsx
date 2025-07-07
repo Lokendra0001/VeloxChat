@@ -117,9 +117,9 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
   return (
     <>
       <div
-        className={`max-w-md border-l border-gray-300  mx-auto bg-white h-full md:flex flex-col shadow-lg overflow-hidden absolute  w-full z-[90] md:relative  transition-all ${
-          isSideOpen ? "left-0" : "left-full"
-        } md:left-0`}
+        className={`max-w-md border-l border-gray-300 mx-auto bg-white h-full md:flex flex-col shadow-lg overflow-hidden absolute w-full z-[90] md:relative transition-all duration-300 ${
+          isSideOpen ? "right-0" : "-right-full"
+        } md:right-0`}
       >
         {/* Top Header */}
         <Header onAddContact={setShowAddContact} />

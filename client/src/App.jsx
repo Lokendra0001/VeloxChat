@@ -35,7 +35,7 @@ const App = () => {
         });
       })
       .catch((err) => console.log(err.response.message))
-      .finally(() => setTimeout(() => setLoading(false), 2000));
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading)

@@ -29,7 +29,7 @@ const App = () => {
     axios
       .get(`${serverObj.apikey}/user/getCurrentUser`, { withCredentials: true })
       .then((res) => {
-        dispatch(addUser(res.data));
+        dispatch(addUser({...res.data, status : "online"}));
         toast(`Welcome Back ${res.data.username}`, {
           icon: "👏",
         });

@@ -66,9 +66,9 @@ const AuthLayout = () => {
 
   return (
     <BubbleBackground>
-      <div className="min-h-[20dvh] w-[90dvw] xl:w-[65dvw] bg-border rounded-xl flex shadow-xl overflow-hidden">
+      <div className="min-h-[20dvh] w-md sm:w-[90dvw] mx-1.5 xl:w-[65dvw] bg-border rounded-xl flex shadow-xl overflow-hidden">
         {/* Left Form */}
-        <div className="w-full md:w-1/2 h-full px-5 py-7 sm:px-10 sm:py-10 flex flex-col">
+        <div className="w-full md:w-1/2 h-full px-3 py-5 sm:px-10 sm:py-10 flex flex-col bg-white">
           <div className="flex items-center mb-4">
             <img
               src={logo}
@@ -78,7 +78,7 @@ const AuthLayout = () => {
           </div>
           <p className="text-[#667781] mb-8">Connect with friends instantly</p>
 
-          <div className="flex  space-x-4 mb-8 border-b border-[#e2e8f0]">
+          <div className="flex  space-x-4 mb-8 border-b border-transparent">
             <button
               onClick={() => setIsLogin(true)}
               className={`pb-2 px-1 font-medium ${

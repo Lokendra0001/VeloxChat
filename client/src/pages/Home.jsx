@@ -7,7 +7,7 @@ const Home = () => {
   const [isSideOpen, setIsSideOpen] = useState(false);
 
   return (
-    <div className="flex w-full  h-screen">
+    <div className="flex w-full  h-[100dvh]">
       <div className="md:w-1/3 lg:w-1/4 border-r border-border">
         <div
           className="z-[100] text-[27px] fixed top-5 right-3 text-gray-600 md:hidden"

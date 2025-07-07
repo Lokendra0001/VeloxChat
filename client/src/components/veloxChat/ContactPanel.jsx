@@ -52,7 +52,11 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
       console.log(friend);
       const isAlreadyFriend = friends.find((user) => user._id === friend._id);
       if (isAlreadyFriend) return;
-      setFriends((prev) => [...prev, { ...friend }]);
+      const updatedFriends = [...friends, { ...friend }];
+      setFriends(updatedFriends);
+
+      // Also update the filtered list so the UI reflects change
+      setFilteredFriends(updatedFriends);
       handleSuccessMsg(`${friend.username} accepted your request.`);
     };
 

@@ -324,7 +324,8 @@ function ChatBox() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                handleSendMessage({ message: e.target.value });
+                if (e.target.value)
+                  handleSendMessage({ message: e.target.value });
               }
             }}
           />

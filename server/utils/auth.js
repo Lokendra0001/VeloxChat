@@ -12,9 +12,10 @@ const generateTokenAndSetCookie = (res, user) => {
     res.cookie('z_tk_rj_91RkXz', token, {
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
+        sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
+    });
+
 }
 
 const getUser = (token) => {

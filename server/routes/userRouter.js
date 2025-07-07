@@ -34,13 +34,6 @@ router.post('/signin', async (req, res) => {
         const isMatchedPassword = await user.comparePassword(loginPassword);
         if (!isMatchedPassword) return res.status(401).json({ message: "Invalid Password." });
 
-        res.cookie('z_tk_rj_91RkXz', {
-            httpOnly: true,      // ✅ protect from client-side JS
-            secure: false,       // ❌ don't enforce HTTPS in dev
-            sameSite: "lax",     // ✅ allows form submissions & most CSRF protection
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        })
-
         generateTokenAndSetCookie(res, user);
 
         const { password: _, ...userWithoutPassword } = user._doc
@@ -59,7 +52,7 @@ router.get('/signout', async (req, res) => {
         res.clearCookie("z_tk_rj_91RkXz", {
             httpOnly: true,
             secure: true,
-            sameSite: "strict",
+            sameSite: 'none',
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
 

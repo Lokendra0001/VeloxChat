@@ -235,7 +235,7 @@ function ChatBox() {
   return (
     <div className="flex flex-col h-screen w-full bg-white">
       {/* Header */}
-      <div className="sticky top-0 flex items-center justify-between bg-gray-50 z-50 h-16 p-3 border-b border-gray-300">
+      <div className="flex items-center justify-between bg-gray-50 z-50 h-16 p-3 border-b border-gray-300">
         <div className="flex items-center space-x-3 cursor-pointer w-full">
           <div className="w-8 h-8 rounded-full overflow-hidden shadow-md border border-gray-300">
             <img

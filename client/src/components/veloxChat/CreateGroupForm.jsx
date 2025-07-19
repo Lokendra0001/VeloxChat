@@ -11,6 +11,9 @@ import {
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import serverObj from "../../config/config";
+import { handleSuccessMsg } from "../../config/toast";
+import { useNavigate } from "react-router-dom";
 
 const CreateGroupForm = () => {
   const [friends, setFriends] = useState([]);
@@ -22,13 +25,15 @@ const CreateGroupForm = () => {
   } = useForm();
   const groupProfileImg = watch("groupProfileImg");
   const loggedInUser = useSelector((state) => state.auth.user);
-  console.log(loggedInUser);
   const [selectedFriends, setSelectedFriends] = useState([loggedInUser._id]);
+  const [loading, setLoading] = useState(false);
+  const apiKey = serverObj.apikey;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleGetAllFriends = () => {
       axios
-        .get("http://localhost:3000/user/getAllFriends", {
+        .get(`${apiKey}/user/getAllFriends`, {
           withCredentials: true,
         })
         .then((res) => setFriends(res.data.friends))
@@ -56,6 +61,7 @@ const CreateGroupForm = () => {
   };
 
   const handleCreateGroupSubmit = (data) => {
+    setLoading(true);
     const formData = new FormData();
 
     // Append the actual file (not just the file name)
@@ -71,19 +77,23 @@ const CreateGroupForm = () => {
 
     // Optional: send to server using axios
     axios
-      .post("http://localhost:3000/group/createGroup", formData, {
+      .post(`${apiKey}/group/createGroup`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         withCredentials: true,
       })
-      .then((res) => console.log(res.data))
-      .catch((err) => console.error(err));
+      .then((res) => {
+        handleSuccessMsg(res.data);
+        navigate("/");
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
   };
 
   return (
     <form
-      className="max-w-lg w-full mx-auto bg-white shadow-md rounded-lg p-6"
+      className="max-w-lg w-full mx-auto bg-white shadow-md rounded-lg p-6 select-none"
       encType="multipart/form-data"
       onSubmit={handleSubmit(handleCreateGroupSubmit)}
     >
@@ -203,10 +213,15 @@ const CreateGroupForm = () => {
 
       {/* Create Button */}
       <button
-        className="w-full bg-teal-600 text-white py-2 rounded hover:bg-teal-700 transition"
+        className={`w-full ${
+          loading
+            ? "bg-teal-600/60 cursor-not-allowed"
+            : "bg-teal-600 hover:bg-teal-700 "
+        }  text-white py-2 rounded transition flex items-center justify-center gap-1`}
         type="submit"
+        disabled={loading}
       >
-        Create Group
+        <Plus size={18} /> {loading ? "Creating..." : "Create Group"}
       </button>
     </form>
   );

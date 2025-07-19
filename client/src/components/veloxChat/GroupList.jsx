@@ -6,6 +6,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addSelectedGroup } from "../../store/slices/selectedGroupSlice";
 import { removeselectedFriend } from "../../store/slices/selectedFriendSlice";
+import serverObj from "../../config/config";
 
 const GroupList = ({ setSideOpen }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,16 +14,17 @@ const GroupList = ({ setSideOpen }) => {
   const [searchTerm, setSearchTerm] = useState(false);
   const [showCreateGroupForm, setShowCreateGroupForm] = useState(false);
   const dispatch = useDispatch();
+  const apiKey = serverObj.apikey;
 
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("http://localhost:3000/group/getAllGroups", {
+      .get(`${apiKey}/group/getAllGroups`, {
         withCredentials: true,
       })
       .then((res) => setGroups(res.data))
       .catch((err) => console.log(err))
-      .finally(() => setTimeout(() => setIsLoading(false), 100));
+      .finally(() => setIsLoading(false));
   }, []);
   return (
     <>

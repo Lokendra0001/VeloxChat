@@ -222,7 +222,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
         )}
 
         {/* Footer with Profile & Notifications */}
-        <div className="py-1 h-14 flex justify-between  items-center gap-4 px-4 border-t border-gray-300 bg-black">
+        <div className="py-1 h-14 flex justify-between  items-center gap-4 px-4 border-t border-gray-300 ">
           {/* User Info */}
           <NavLink to="/profile" className="flex gap-3 items-center  grow">
             <img

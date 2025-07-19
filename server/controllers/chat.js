@@ -13,6 +13,11 @@ const handleSendMsg = async (req, res) => {
 const handleGetAllChats = async (req, res) => {
     try {
         const chats = await Chats.find({})
+            .populate({
+                path: 'sender_id',
+                select: '_id  username profilePic status' // exclude password
+            });
+
         res.status(200).json(chats)
     } catch (error) {
         res.status(500).json(error.message)

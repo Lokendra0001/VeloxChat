@@ -17,7 +17,7 @@ const Home = () => {
       </div>
 
       {/* Sidebar */}
-      <div className="md:w-1/3 lg:w-1/4 border-r border-border h-full">
+      <div className="md:w-1/3 lg:w-1/4 border-r border-border h-full overflow-hidden">
         <ContactsPanel isSideOpen={isSideOpen} setSideOpen={setIsSideOpen} />
       </div>
 

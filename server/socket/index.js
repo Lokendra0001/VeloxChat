@@ -26,13 +26,30 @@ const setUpSocket = (server) => {
             socket.broadcast.emit("user-online", userId);
         });
 
-        socket.on('send-message', async ({ message, sender_id, receiver_id }) => {
-            const msg = await Chats.create({ message, sender_id, receiver_id });
-            const receiverSocketId = userSocketMap[receiver_id];
-            if (receiverSocketId) {
-                socket.to(receiverSocketId).emit('received-message', msg);
-                socket.to(receiverSocketId).emit('friend-stopTyping', sender_id)
+        socket.on('send-message', async ({ message, sender_id, receiver_id, group_id, groupMembers, senderProfilePic, senderName }) => {
+            const chat = await Chats.create({ message, sender_id, receiver_id, group_id });
+
+            const msg = {
+                ...chat.toObject(), senderProfilePic, senderName
             }
+
+
+            if (!groupMembers) {
+                const receiverSocketId = userSocketMap[receiver_id];
+                if (receiverSocketId) {
+                    socket.to(receiverSocketId).emit('received-message', chat);
+                    socket.to(receiverSocketId).emit('friend-stopTyping', sender_id)
+                }
+            } else {
+                const members = JSON.parse(groupMembers);
+                members.forEach(member => {
+                    const receiverSocketId = userSocketMap[member];
+                    if (receiverSocketId) {
+                        socket.to(receiverSocketId).emit('received-message', msg);
+                    }
+                });
+            }
+
         });
 
         socket.on('send-request', (payload) => {
@@ -54,12 +71,33 @@ const setUpSocket = (server) => {
             socket.to(targetSocketId).emit('addFriend-contactPanel', friend)
         })
 
-        socket.on('typing', ({ receiver_id, sender_id, msgLen }) => {
-            const socketId = userSocketMap[receiver_id];
-            socket.to(socketId).emit('friend-typing', sender_id);
-            if (msgLen == 0)
-                socket.to(socketId).emit('friend-stopTyping', sender_id)
-        })
+        socket.on('typing', (payload) => {
+            if (payload.groupMembers) {
+                const { sender_name, groupMembers, groupId, msgLen } = payload;
+
+                groupMembers.forEach(member => {
+                    const receiverSocketId = userSocketMap[member];
+                    if (receiverSocketId) {
+                        socket.to(receiverSocketId).emit('group-typing', {sender_name, groupId});
+                        if (msgLen === 0) {
+                            socket.to(receiverSocketId).emit('group-stopTyping', groupId);
+                        }
+                    }
+                });
+
+            } else {
+                const { sender_id, receiver_id, msgLen } = payload;
+                const socketId = userSocketMap[receiver_id];
+
+                if (socketId) {
+                    socket.to(socketId).emit('friend-typing', sender_id);
+                    if (msgLen === 0) {
+                        socket.to(socketId).emit('friend-stopTyping', sender_id);
+                    }
+
+                }
+            }
+        });
 
         const handleUserDisconnect = async () => {
             const userId = socket.userId;

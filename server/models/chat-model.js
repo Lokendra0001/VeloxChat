@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model, default: mongoose } = require('mongoose');
 
 const chatSchema = new Schema({
     message: {
@@ -6,15 +6,21 @@ const chatSchema = new Schema({
         required: true,
     },
     sender_id: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+        required: true,
     },
     receiver_id: {
-        type: String,
-        required: true
-    }
-}, { timestamps: true })
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+        default: null,
+    },
+    group_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'groups',
+        default: null,
+    },
+}, { timestamps: true });
 
-const Chats = model('chat', chatSchema)
-
+const Chats = model('chat', chatSchema);
 module.exports = Chats;

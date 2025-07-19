@@ -8,7 +8,7 @@ const setUpSocket = require('./socket');
 const userRouter = require('./routes/userRouter');
 const chatRouter = require('./routes/chatRouter');
 const contactRouter = require('./routes/contactRequestRouter');
-
+const groupRouter = require('./routes/groupRouter')
 const app = express();
 const PORT = 3000;
 const server = http.createServer(app);
@@ -32,5 +32,6 @@ setUpSocket(server)
 app.use('/user', userRouter);
 app.use('/chat', chatRouter)
 app.use('/contact', contactRouter)
+app.use('/group', groupRouter)
 
 server.listen(PORT, () => console.log("Server Started At 3000."))

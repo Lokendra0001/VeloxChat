@@ -11,10 +11,12 @@ import { NavLink } from "react-router-dom";
 import socket from "../../config/socket";
 import { addselectedFriend } from "../../store/slices/selectedFriendSlice";
 import { handleErrorMsg, handleSuccessMsg } from "../../config/toast";
+import GroupList from "./GroupList";
 
 function ContactsPanel({ isSideOpen, setSideOpen }) {
   const [friends, setFriends] = useState([]);
   const [filteredFriends, setFilteredFriends] = useState([]);
+  const [isGroup, setIsGroup] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showAddContact, setShowAddContact] = useState(false);
@@ -117,7 +119,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
   return (
     <>
       <div
-        className={`max-w-md border-l border-gray-300 mx-auto bg-white h-full md:flex flex-col shadow-lg overflow-hidden absolute w-full z-[90] md:relative transition-all duration-300 ${
+        className={`max-w-md border-l border-gray-300 mx-auto bg-white h-[100dvh]  md:flex flex-col shadow-lg overflow-hidden absolute w-full z-[90] md:relative transition-all duration-300 ${
           isSideOpen ? "right-0" : "-right-full"
         } md:right-0`}
       >
@@ -126,13 +128,13 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
 
         {/* Search Bar */}
         <div className="px-2 mt-2 bg-gray-50">
-          <div className="relative flex w-full border border-gray-300 rounded-lg bg-white px-4 py-1">
-            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+          <div className="relative flex w-full border border-gray-300 rounded bg-white px-2 py-0.5">
+            <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+              <Search className="h-4.5 w-4.5 text-gray-400" />
             </div>
             <input
               type="text"
-              className="block w-full pr-3 py-1 outline-none sm:text-sm bg-transparent placeholder-gray-500"
+              className="block w-full pr-3 py-1 outline-none sm:text-sm bg-transparent placeholder-gray-400"
               placeholder="Search contacts..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -140,58 +142,89 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
           </div>
         </div>
 
-        {/* Friend List */}
-        <div className="h-[70dvh] mt-3 overflow-y-auto">
-          {isLoading ? (
-            // Skeleton loader for UI feedback
-            Array.from({ length: 5 }).map((_, index) => (
-              <div key={index} className="p-4 flex items-center animate-pulse">
-                <div className="w-12 h-12 rounded-full bg-gray-300"></div>
-                <div className="ml-4 flex-1 space-y-2">
-                  <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                  <div className="h-3 bg-zinc-300 rounded w-1/3"></div>
-                </div>
-              </div>
-            ))
-          ) : filteredFriends.length > 0 ? (
-            filteredFriends.map((user, index) => (
-              <UserCard
-                key={user._id || index}
-                user={user}
-                setSideOpen={setSideOpen}
-              />
-            ))
-          ) : (
-            // Empty state view
-            <div className="flex flex-col items-center justify-center p-8 text-center">
-              <div className="w-24 h-24 bg-other-bubble rounded-full flex items-center justify-center mb-4">
-                <User className="w-12 h-12 text-gray-400" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-1">
-                {searchTerm ? "No results found" : "No contacts"}
-              </h3>
-              <p className="text-gray-500">
-                {searchTerm
-                  ? "Try a different search term"
-                  : "Add new contacts to get started"}
-              </p>
-              {!searchTerm && (
-                <button
-                  className="mt-4 px-2 py-1.5 bg-primary text-white rounded hover:bg-primary-hover cursor-pointer transition flex items-center"
-                  onClick={() => setShowAddContact(true)}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Contact
-                </button>
-              )}
-            </div>
-          )}
+        {/* Types of Chat individual or group */}
+        <div className="flex gap-2 w-full justify-start pl-3 items-center border-b border-transparent text-sm pt-2">
+          <button
+            onClick={() => setIsGroup(false)}
+            className={`pb-1 px-1 font-medium ${
+              !isGroup
+                ? "text-primary border-b-2 border-primary"
+                : "text-gray-500"
+            }`}
+          >
+            Chats
+          </button>
+          <button
+            onClick={() => setIsGroup(true)}
+            className={`pb-1 px-1 font-medium ${
+              isGroup
+                ? "text-primary border-b-2 border-primary"
+                : "text-gray-500"
+            }`}
+          >
+            Groups
+          </button>
         </div>
 
+        {isGroup ? (
+          <GroupList setSideOpen={setSideOpen} />
+        ) : (
+          // friends List
+          <div className="h-[68dvh] mt-3 overflow-y-auto">
+            {isLoading ? (
+              // Skeleton loader for UI feedback
+              Array.from({ length: 3 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="p-4 flex items-center animate-pulse"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gray-300"></div>
+                  <div className="ml-4 flex-1 space-y-2">
+                    <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+                    <div className="h-3 bg-zinc-300 rounded w-1/3"></div>
+                  </div>
+                </div>
+              ))
+            ) : filteredFriends.length > 0 ? (
+              filteredFriends.map((user, index) => (
+                <UserCard
+                  key={user._id || index}
+                  user={user}
+                  setSideOpen={setSideOpen}
+                />
+              ))
+            ) : (
+              // Empty state view
+              <div className="flex flex-col items-center justify-center p-8 text-center">
+                <div className="w-24 h-24 bg-other-bubble rounded-full flex items-center justify-center mb-4">
+                  <User className="w-12 h-12 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-1">
+                  {searchTerm ? "No results found" : "No contacts"}
+                </h3>
+                <p className="text-gray-500">
+                  {searchTerm
+                    ? "Try a different search term"
+                    : "Add new contacts to get started"}
+                </p>
+                {!searchTerm && (
+                  <button
+                    className="mt-4 px-2 py-1.5 bg-primary text-white rounded hover:bg-primary-hover cursor-pointer transition flex items-center"
+                    onClick={() => setShowAddContact(true)}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Contact
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Footer with Profile & Notifications */}
-        <div className="grow py-1 h-14 flex justify-between px-4 items-center border-t border-gray-300 bg-white">
+        <div className="py-1 h-14 flex justify-between  items-center gap-4 px-4 border-t border-gray-300 bg-black">
           {/* User Info */}
-          <div className="flex gap-3 items-center">
+          <NavLink to="/profile" className="flex gap-3 items-center  grow">
             <img
               src={loggedInUser?.profilePic}
               alt={loggedInUser?.username || "User"}
@@ -201,14 +234,11 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
               <h1 className="text-sm font-medium text-gray-800 -mb-0.5 truncate max-w-[120px]">
                 {loggedInUser?.username || "Guest"}
               </h1>
-              <NavLink
-                to="/profile"
-                className="text-xs text-gray-500 hover:text-primary-hover transition-colors duration-200"
-              >
+              <button className="text-xs text-primary sm:text-gray-500 hover:text-primary-hover transition-colors duration-200">
                 View Profile
-              </NavLink>
+              </button>
             </div>
-          </div>
+          </NavLink>
 
           {/* Notification Icon */}
           <NavLink

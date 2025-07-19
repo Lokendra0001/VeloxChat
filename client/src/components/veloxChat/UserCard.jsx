@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { MoreVertical } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { addselectedFriend } from "../../store/slices/selectedFriendSlice";
+import { removeSelectedGroup } from "../../store/slices/selectedGroupSlice";
 
 const UserCard = ({ user, setSideOpen }) => {
   const dispatch = useDispatch();
@@ -11,11 +12,12 @@ const UserCard = ({ user, setSideOpen }) => {
       className=" flex p-2 ml-1 cursor-pointer"
       onClick={() => {
         dispatch(addselectedFriend(user));
+        dispatch(removeSelectedGroup());
         setSideOpen?.(false);
       }}
     >
       {/* User ProfilePic */}
-      <div className="h-10 w-10 relative grid place-items-center overflow-hidden">
+      <div className="h-8 w-8 relative grid place-items-center overflow-hidden">
         <img
           src={user.profilePic}
           alt="User Img"
@@ -35,17 +37,19 @@ const UserCard = ({ user, setSideOpen }) => {
       </div>
 
       {/* User Name & Status & More Vertical Icon */}
-      <div className="ml-4 flex-1 flex items-center justify-between w-full">
+      <div className="ml-3 flex-1 flex items-center justify-between w-full">
         <div>
-          <h2 className="text-gray-900 font-semibold">{user?.username}</h2>
+          <h2 className="text-gray-700 font-semibold text-sm">
+            {user?.username}
+          </h2>
           <p
-            className={`text-sm ${
+            className={` ${
               user.status === "online"
                 ? "text-green-600"
                 : user.status === "recent"
                 ? "text-yellow-500"
                 : "hidden"
-            }`}
+            } text-xs leading-2.5`}
           >
             {user.status}
           </p>

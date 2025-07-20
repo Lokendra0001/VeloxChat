@@ -22,7 +22,7 @@ const Home = () => {
       </div>
 
       {/* Chat area */}
-      <div className="grow overflow-hidden min-w-0">
+      <div className="overflow-hidden flex-1">
         <ChatBox />
       </div>
     </div>

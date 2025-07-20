@@ -26,18 +26,22 @@ const setUpSocket = (server) => {
             socket.broadcast.emit("user-online", userId);
         });
 
-        socket.on('send-message', async ({ message, sender_id, receiver_id, group_id, groupMembers, senderProfilePic, senderName }) => {
-            const chat = await Chats.create({ message, sender_id, receiver_id, group_id });
+        socket.on('send-message', async (msgPayload) => {
 
-            const msg = {
-                ...chat.toObject(), senderProfilePic, senderName
-            }
+            const { message = null, sender_id, receiver_id, group_id, groupMembers = null, senderProfilePic = null, senderName = null } = msgPayload;
+
+            console.log(msgPayload)
+
 
 
             if (!groupMembers) {
+                console.log(receiver_id)
+                console.log(userSocketMap)
+                console.log(userSocketMap[receiver_id])
+
                 const receiverSocketId = userSocketMap[receiver_id];
                 if (receiverSocketId) {
-                    socket.to(receiverSocketId).emit('received-message', chat);
+                    socket.to(receiverSocketId).emit('received-message', msgPayload);
                     socket.to(receiverSocketId).emit('friend-stopTyping', sender_id)
                 }
             } else {
@@ -45,7 +49,7 @@ const setUpSocket = (server) => {
                 members.forEach(member => {
                     const receiverSocketId = userSocketMap[member];
                     if (receiverSocketId) {
-                        socket.to(receiverSocketId).emit('received-message', msg);
+                        socket.to(receiverSocketId).emit('received-message', msgPayload);
                     }
                 });
             }
@@ -78,7 +82,7 @@ const setUpSocket = (server) => {
                 groupMembers.forEach(member => {
                     const receiverSocketId = userSocketMap[member];
                     if (receiverSocketId) {
-                        socket.to(receiverSocketId).emit('group-typing', {sender_name, groupId});
+                        socket.to(receiverSocketId).emit('group-typing', { sender_name, groupId });
                         if (msgLen === 0) {
                             socket.to(receiverSocketId).emit('group-stopTyping', groupId);
                         }

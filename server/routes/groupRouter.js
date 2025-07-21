@@ -9,14 +9,14 @@ router.post('/createGroup', checkAuthentication, upload.single("groupProfilePic"
         const { groupName, selectedFriends } = req.body;
         const groupMembers = JSON.parse(selectedFriends); // safely parse
 
-        await Group.create({
+        const group = await Group.create({
             groupName,
             groupProfileImg: req.file.path,
             groupMember: groupMembers,
             createdBy: req.user._id
         });
 
-        res.status(201).json("Group Is Created!")
+        res.status(201).json({ message: "Group Is Created!", group })
     } catch (error) {
         res.status(500).json(error.message)
     }

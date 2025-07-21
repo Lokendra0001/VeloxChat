@@ -4,7 +4,7 @@ const Users = require('../models/user-model');
 
 const userSocketMap = {};
 
-const allowedOrigin = ["http://localhost:5173", "https://veloxchat.vercel.app"]
+const allowedOrigin = ["http://localhost:5173", "https://veloxchat.vercel.app", "http://10.158.108.50:5173"]
 
 
 const setUpSocket = (server) => {
@@ -35,10 +35,6 @@ const setUpSocket = (server) => {
 
 
             if (!groupMembers) {
-                console.log(receiver_id)
-                console.log(userSocketMap)
-                console.log(userSocketMap[receiver_id])
-
                 const receiverSocketId = userSocketMap[receiver_id];
                 if (receiverSocketId) {
                     socket.to(receiverSocketId).emit('received-message', msgPayload);
@@ -114,6 +110,17 @@ const setUpSocket = (server) => {
 
         }
 
+
+        socket.on('group-created', (payload) => {
+
+            const { groupMember } = payload;
+            groupMember.forEach(member => {
+                const receiverSocketId = userSocketMap[member];
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit('group-created', payload);
+                }
+            });
+        })
 
         socket.on('logged-out', handleUserDisconnect);
         socket.on('disconnect', handleUserDisconnect);

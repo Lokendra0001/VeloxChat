@@ -108,7 +108,7 @@ const App = () => {
       <Toaster
         position="top-center"
         toastOptions={{
-          className: "text-sm rounded-md shadow-lg",
+          className: "text-sm rounded-md shadow-lg ",
           duration: 1500,
           style: {
             background: "#1f2937", // Tailwind gray-800

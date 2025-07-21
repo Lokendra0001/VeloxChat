@@ -14,8 +14,9 @@ import { useSelector } from "react-redux";
 import serverObj from "../../config/config";
 import { handleSuccessMsg } from "../../config/toast";
 import { useNavigate } from "react-router-dom";
+import socket from "../../config/socket";
 
-const CreateGroupForm = () => {
+const CreateGroupForm = ({ setShowCreateGroupForm }) => {
   const [friends, setFriends] = useState([]);
   const {
     register,
@@ -68,14 +69,11 @@ const CreateGroupForm = () => {
     if (data.groupProfileImg?.[0]) {
       formData.append("groupProfilePic", data.groupProfileImg[0]);
     }
-
-    // Append group name
     formData.append("groupName", data.groupName);
 
     // Convert selectedFriends array to JSON string or loop through each friend
     formData.append("selectedFriends", JSON.stringify(selectedFriends));
 
-    // Optional: send to server using axios
     axios
       .post(`${apiKey}/group/createGroup`, formData, {
         headers: {
@@ -84,8 +82,10 @@ const CreateGroupForm = () => {
         withCredentials: true,
       })
       .then((res) => {
-        handleSuccessMsg(res.data);
-        navigate("/");
+        const group = res.data.group;
+        handleSuccessMsg(res.data.message);
+        setShowCreateGroupForm(false);
+        socket.emit("group-created", group);
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));

@@ -101,9 +101,9 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
     return () => {
       return () => {
         socket.off("received-request", handleIncomingRequest);
-        socket.off("addFriend-contactPanel", handleAddAcceptedRequestFriend); // ✅ correct
+        socket.off("addFriend-contactPanel", handleAddAcceptedRequestFriend);
         socket.off("user-offline", handleUserOffline);
-        socket.off("user-online", handleUserOnline); // also add this
+        socket.off("user-online", handleUserOnline);
       };
     };
   }, []);
@@ -119,7 +119,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
   return (
     <>
       <div
-        className={`max-w-md border-l border-gray-300 mx-auto bg-white h-[100dvh]  md:flex flex-col shadow-lg overflow-hidden absolute w-full z-[90] md:relative transition-all duration-300 ${
+        className={`max-w-md border-l border-gray-300 dark:border-border mx-auto bg-white dark:bg-background h-[100dvh] md:flex flex-col shadow-lg overflow-hidden absolute w-full z-[90] md:relative transition-all duration-300 select-none ${
           isSideOpen ? "right-0" : "-right-full"
         } md:right-0`}
       >
@@ -127,15 +127,15 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
         <Header onAddContact={setShowAddContact} />
 
         {/* Search Bar */}
-        <div className="px-2 mt-2 bg-gray-50">
-          <div className="relative flex w-full border border-gray-300 rounded bg-white px-2 py-0.5">
+        <div className="px-2 mt-2  dark:bg-transparent">
+          <div className="relative flex w-full border border-gray-300 dark:border-border rounded bg-white dark:bg-secondary px-2 py-0.5">
             <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
-              <Search className="h-4.5 w-4.5 text-gray-400" />
+              <Search className="h-4.5 w-4.5 text-gray-400 dark:text-text-secondary" />
             </div>
             <input
               type="text"
-              className="block w-full pr-3 py-1 outline-none sm:text-sm bg-transparent placeholder-gray-400"
-              placeholder="Search contacts..."
+              className="block w-full pr-3 py-1 outline-none sm:text-sm bg-transparent placeholder-gray-400 dark:placeholder-text-secondary dark:text-text-primary"
+              placeholder={`Search ${isGroup ? "Groups..." : "Contacts..."}`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -148,8 +148,8 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
             onClick={() => setIsGroup(false)}
             className={`pb-1 px-1 font-medium ${
               !isGroup
-                ? "text-primary border-b-2 border-primary"
-                : "text-gray-500"
+                ? "text-primary dark:text-primary-hover border-b-2 border-primary dark:border-primary-hover"
+                : "text-gray-500 dark:text-text-secondary"
             }`}
           >
             Chats
@@ -158,8 +158,8 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
             onClick={() => setIsGroup(true)}
             className={`pb-1 px-1 font-medium ${
               isGroup
-                ? "text-primary border-b-2 border-primary"
-                : "text-gray-500"
+                ? "text-primary dark:text-primary-hover border-b-2 border-primary dark:border-primary-hover"
+                : "text-gray-500 dark:text-text-secondary"
             }`}
           >
             Groups
@@ -167,7 +167,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
         </div>
 
         {isGroup ? (
-          <GroupList setSideOpen={setSideOpen} />
+          <GroupList setSideOpen={setSideOpen} searchTerm={searchTerm} />
         ) : (
           // friends List
           <div className="h-[68dvh] mt-3 overflow-y-auto">
@@ -178,10 +178,10 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
                   key={index}
                   className="p-4 flex items-center animate-pulse"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gray-300"></div>
+                  <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-light-border"></div>
                   <div className="ml-4 flex-1 space-y-2">
-                    <div className="h-3 bg-gray-300 rounded w-3/4"></div>
-                    <div className="h-3 bg-zinc-300 rounded w-1/3"></div>
+                    <div className="h-3 bg-gray-300 dark:bg-light-border rounded w-3/4"></div>
+                    <div className="h-3 bg-zinc-300 dark:bg-secondary rounded w-1/3"></div>
                   </div>
                 </div>
               ))
@@ -196,20 +196,20 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
             ) : (
               // Empty state view
               <div className="flex flex-col items-center justify-center p-8 text-center">
-                <div className="w-24 h-24 bg-other-bubble rounded-full flex items-center justify-center mb-4">
-                  <User className="w-12 h-12 text-gray-400" />
+                <div className="w-24 h-24 bg-other-bubble dark:bg-secondary rounded-full flex items-center justify-center mb-4">
+                  <User className="w-12 h-12 text-gray-400 dark:text-text-secondary" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-1">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-text-primary mb-1">
                   {searchTerm ? "No results found" : "No contacts"}
                 </h3>
-                <p className="text-gray-500">
+                <p className="text-gray-500 dark:text-text-secondary">
                   {searchTerm
                     ? "Try a different search term"
                     : "Add new contacts to get started"}
                 </p>
                 {!searchTerm && (
                   <button
-                    className="mt-4 px-2 py-1.5 bg-primary text-white rounded hover:bg-primary-hover cursor-pointer transition flex items-center"
+                    className="mt-4 px-2 py-1.5 bg-primary dark:bg-primary-hover text-white rounded hover:bg-primary-hover dark:hover:bg-primary cursor-pointer transition flex items-center"
                     onClick={() => setShowAddContact(true)}
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -222,19 +222,19 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
         )}
 
         {/* Footer with Profile & Notifications */}
-        <div className="py-1 h-14 flex justify-between  items-center gap-4 px-4 border-t border-gray-300 ">
+        <div className="py-1 h-14 flex justify-between items-center gap-4 px-4 border-t border-gray-300 dark:border-zinc-800">
           {/* User Info */}
-          <NavLink to="/profile" className="flex gap-3 items-center  grow">
+          <NavLink to="/profile" className="flex gap-3 items-center grow">
             <img
               src={loggedInUser?.profilePic}
               alt={loggedInUser?.username || "User"}
-              className="h-9 w-9 rounded-full object-cover border border-gray-200"
+              className="h-9 w-9 rounded-full object-cover border border-gray-200 dark:border-light-border"
             />
             <div className="flex flex-col">
-              <h1 className="text-sm font-medium text-gray-800 -mb-0.5 truncate max-w-[120px]">
+              <h1 className="text-sm font-medium text-gray-800 dark:text-text-primary -mb-0.5 truncate max-w-[120px]">
                 {loggedInUser?.username || "Guest"}
               </h1>
-              <button className="text-xs text-primary sm:text-gray-500 hover:text-primary-hover transition-colors duration-200">
+              <button className="text-xs text-primary dark:text-primary-hover sm:text-gray-500 dark:sm:text-text-secondary hover:text-primary-hover dark:hover:text-primary transition-colors duration-200">
                 View Profile
               </button>
             </div>
@@ -243,10 +243,10 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
           {/* Notification Icon */}
           <NavLink
             to="/notification"
-            className="p-2 rounded-full hover:bg-teal-100 transition-colors duration-200 relative"
+            className="p-2 rounded-full hover:bg-teal-100 dark:hover:bg-secondary transition-colors duration-200 relative"
             title="Notifications"
           >
-            <Bell size={20} className="text-gray-600" />
+            <Bell size={20} className="text-gray-600 dark:text-text-secondary" />
             {notify && (
               <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
             )}

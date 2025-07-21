@@ -127,7 +127,10 @@ function ChatBox() {
   const handleSendMessage = (data) => {
     setShowPicker(false);
     setShowMediaPicker(false);
-    setSendingLoading(true);
+
+    console.log(data);
+    if (!data?.message && data?.selectedMedia && data?.selectedDoc) return;
+
     let selectedFile = null;
     let previewFile = null;
     if (data.selectedMedia && data.selectedMedia.length > 0) {
@@ -300,11 +303,11 @@ function ChatBox() {
   // If No Friends or Group Selected Return SomeThing
   if (!selectedGroup && !selectedFriend) {
     return (
-      <div className="h-[100dvh] w-full flex flex-col justify-center items-center bg-gradient-to-br from-gray-50 to-white">
+      <div className="h-[100dvh] w-full flex flex-col justify-center items-center bg-gradient-to-br from-gray-50 to-white dark:from-background dark:to-secondary">
         <div className="relative mb-10">
-          <div className="absolute -inset-4 bg-teal-100/10 blur-xl rounded-full" />
-          <div className="relative w-28 h-28 flex items-center justify-center rounded-full shadow-lg">
-            <MessagesSquareIcon className="w-14 h-14 text-primary" />
+          <div className="absolute -inset-4 bg-teal-100/10 dark:bg-primary/10 blur-xl rounded-full" />
+          <div className="relative w-28 h-28 flex items-center justify-center rounded-full shadow-lg dark:bg-secondary">
+            <MessagesSquareIcon className="w-14 h-14 text-primary dark:text-primary-hover" />
           </div>
         </div>
 
@@ -312,20 +315,20 @@ function ChatBox() {
           Welcome to VeloxChat
         </h1>
 
-        <p className="text-gray-500 mb-10 max-w-lg text-center px-6 text-sm sm:text-lg">
+        <p className="text-gray-500 dark:text-text-secondary mb-10 max-w-lg text-center px-6 text-sm sm:text-lg">
           Select a contact or start a new conversation to begin your messaging
           experience
         </p>
 
         <div className="flex items-center sm:gap-1 animate-bounce">
-          <ChevronLeft className="w-5 h-5 text-primary" />
-          <span className="text-sm  text-gray-500">
+          <ChevronLeft className="w-5 h-5 text-primary dark:text-primary-hover" />
+          <span className="text-sm text-gray-500 dark:text-text-secondary">
             Select Your Friend or Group
           </span>
         </div>
 
-        <div className="absolute bottom-8 flex items-center gap-2 text-sm text-gray-400">
-          <Lock className="w-4 h-4 text-teal-600" />
+        <div className="absolute bottom-8 flex items-center gap-2 text-sm text-gray-400 dark:text-text-secondary">
+          <Lock className="w-4 h-4 text-teal-600 dark:text-primary-hover" />
           <span>Your messages are end-to-end encrypted</span>
         </div>
       </div>
@@ -333,11 +336,11 @@ function ChatBox() {
   }
 
   return (
-    <div className="flex flex-col h-screen w-full bg-white">
+    <div className="flex flex-col h-screen w-full bg-white dark:bg-background select-none">
       {/* Header */}
-      <div className="flex items-center justify-between bg-gray-50 z-50 h-16 p-3 border-b border-gray-300">
+      <div className="sticky top-0 flex items-center justify-between bg-gray-50 dark:bg-background z-50 h-[10dvh] p-3 border-b border-gray-300 dark:border-light-border">
         <div className="flex items-center space-x-3 cursor-pointer w-full">
-          <div className="w-8 h-8 rounded-full overflow-hidden shadow-md border border-gray-300">
+          <div className="w-8 h-8 rounded-full overflow-hidden shadow-md border border-gray-300 dark:border-light-border">
             <img
               src={selectedGroup?.groupProfileImg || selectedFriend?.profilePic}
               alt="Group || Friend"
@@ -345,7 +348,7 @@ function ChatBox() {
             />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-800 capitalize text-[14px]">
+            <h3 className="font-semibold text-gray-800 dark:text-text-primary capitalize text-[14px]">
               {selectedGroup?.groupName || selectedFriend?.username}
             </h3>
 
@@ -358,7 +361,7 @@ function ChatBox() {
                       : "bg-red-400"
                   }`}
                 />
-                <span className="text-xs capitalize text-gray-700 ">
+                <span className="text-xs capitalize text-gray-700 dark:text-text-secondary">
                   {typing ? "Typing..." : selectedFriend.status}
                 </span>
               </div>
@@ -366,32 +369,34 @@ function ChatBox() {
 
             {selectedGroup && (
               <div className="max-w-[200px] sm:max-w-[400px] overflow-hidden">
-                <span className="truncate  text-[11px] capitalize text-gray-600 whitespace-nowrap block">
+                <span className="truncate text-[11px] capitalize text-gray-600 dark:text-text-secondary whitespace-nowrap block">
                   {members.map((member) => member.username).join(", ")}
                 </span>
               </div>
             )}
           </div>
         </div>
-        <button className="text-gray-500 hover:text-gray-700 hidden md:block">
+        <button className="text-gray-500 dark:text-text-secondary hover:text-gray-700 dark:hover:text-text-primary hidden md:block">
           <MoreVertical size={18} />
         </button>
       </div>
 
       {/* Messages */}
       <div
-        className={`flex-1 overflow-y-auto py-2 px-2 w-full  ${
+        className={`flex-1 grow overflow-y-auto py-2 px-2 w-full ${
           selectedGroup && "px-4"
         } z-0 min-h-0`}
       >
         {loading ? (
           <div className="flex justify-center items-center h-full">
-            <span className="text-sm text-gray-500">Loading messages...</span>
+            <span className="text-sm text-gray-500 dark:text-text-secondary">
+              Loading messages...
+            </span>
           </div>
         ) : (messages || []).length == 0 ? (
           <div className="flex justify-center items-center h-full">
-            <div className="text-center text-gray-400">
-              <MessageCircle className="w-12 h-12 mx-auto mb-3 text-gray-600" />
+            <div className="text-center text-gray-400 dark:text-text-secondary">
+              <MessageCircle className="w-12 h-12 mx-auto mb-3 text-gray-600 dark:text-text-secondary" />
               <p>No messages yet</p>
               <p className="text-sm">
                 Start chatting with "
@@ -401,10 +406,6 @@ function ChatBox() {
           </div>
         ) : (
           <>
-            {/* 
-          chat?.sender_id._id => For First Time Page Reload We wanna the name and profile Pic of the sender in Group Chat.
-          chat?.sender_id => This for the Receiving Message or sending then set to the Chat */}
-
             {messages.map((chat, index) => {
               return (
                 <div
@@ -416,123 +417,120 @@ function ChatBox() {
                       : "justify-start"
                   } px-1`}
                 >
-                  {/* ${
-                      chat?.message?.text.length > 70 ? "flex-col" : ""
-                    }  */}
                   <div
-                    className={`w-fit max-w-[80%]   sm:max-w-[60%] pl-2 pr-2 py-1 flex items-end justify-between gap-3 rounded-sm shadow-sm relative ${
+                    className={`w-fit max-w-[80%] sm:max-w-[60%] pl-2 pr-2 py-1 flex items-end justify-between gap-3 rounded-sm shadow-sm relative ${
                       (chat?.sender_id._id || chat?.sender_id) ===
                       loggedInUser?._id
-                        ? "bg-user-bubble ml-auto"
-                        : `bg-[#c5f7f287]  mr-auto ${
+                        ? "bg-user-bubble dark:bg-user-bubble ml-auto"
+                        : `bg-[#c5f7f287] dark:bg-secondary mr-auto ${
                             selectedGroup && "ml-2.5"
-                          }  ml-0 text-gray-900`
-                    } bgblack`}
+                          } ml-0 text-gray-900 dark:text-text-primary`
+                    }`}
                   >
                     {/* Show sender's profile and name in group chat if not self */}
                     {String(chat?.sender_id._id || chat?.sender_id) !==
                       String(loggedInUser?._id) &&
                       selectedGroup && (
-                        <div className="flex items-center absolute top-1 -left-6 ">
+                        <div className="flex items-center absolute top-1 -left-6">
                           <img
                             src={
                               chat?.sender_id.profilePic ||
                               chat?.senderProfilePic
                             }
                             alt="sender"
-                            className="w-5 h-5 rounded-full  overflow-hidden"
+                            className="w-5 h-5 rounded-full overflow-hidden"
                           />
                         </div>
                       )}
 
                     {/* Message */}
                     <div className="text-[13px] break-words tracking-wide flex flex-col">
-                      <span className="text-[9px] text-red-500 font-medium">
+                      <span className="text-[9px] text-red-500 dark:text-danger font-medium">
                         {String(chat?.sender_id._id || chat?.sender_id) !==
                           String(loggedInUser?._id) &&
                           selectedGroup &&
                           `~${chat?.sender_id.username || chat?.senderName}`}
                       </span>
 
-                      {/* This is For Text Message */}
-                      {chat?.message?.text || chat?.text}
-
-                      {/* This is For Document Message */}
-                      {((chat?.message?.fileType &&
-                        chat?.message?.fileType === "application/pdf") ||
-                        chat?.selectedFile?.type.startsWith(
-                          "application/"
-                        )) && (
-                        <>
-                          <a
-                            href={
-                              chat?.message?.fileUrl || chat?.selectedFile[0]
-                            }
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="  hover:bg-teal-50/50  p-1 px-3 sm:w-70 flex items-center gap-3 transition-all duration-200 "
-                          >
-                            <div className="p-2 rounded-full">
-                              <FileText className="text-green-700" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-xs line-clamp-2 text-zinc-700">
-                                {/* {chat?.fileUrl || chat?.selectedFile?.[0].name} */}
-                                View Document
-                              </p>
-                              <p className="text-[10px] text-gray-500">
-                                Click to open
-                              </p>
-                              {sizeError && (
-                                <p className="text-red-500 animate-pulse text-xs">
-                                  {sizeError}
+                      <span className="flex flex-col gap-1 text-normal dark:text-text-normal">
+                        {/* This is For Document Message */}
+                        {((chat?.message?.fileType &&
+                          chat?.message?.fileType === "application/pdf") ||
+                          chat?.selectedFile?.type.startsWith(
+                            "application/"
+                          )) && (
+                          <>
+                            <a
+                              href={
+                                chat?.message?.fileUrl || chat?.selectedFile[0]
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:bg-teal-50/50 dark:hover:bg-secondary/50 p-1 pr-5 max-w-70 sm:w-auto flex items-center gap-3 transition-all duration-200"
+                            >
+                              <div className="p-2 rounded-full">
+                                <FileText className="text-green-700 dark:text-success" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-xs line-clamp-2 text-zinc-700 dark:text-text-primary">
+                                  View Document
                                 </p>
+                                <p className="text-[10px] text-gray-500 dark:text-text-secondary">
+                                  Click to open
+                                </p>
+                                {sizeError && (
+                                  <p className="text-red-500 dark:text-danger animate-pulse text-xs">
+                                    {sizeError}
+                                  </p>
+                                )}
+                              </div>
+                              {chat?.loading && (
+                                <div className="absolute top-1 right-2 animate-spin rounded-full h-3 w-3 border-t-2 border-primary dark:border-primary-hover"></div>
                               )}
-                            </div>
+                            </a>
+                          </>
+                        )}
+
+                        {/* This is For Image Media Message */}
+                        {((chat?.message?.fileType &&
+                          chat?.message?.fileType.startsWith("image/")) ||
+                          chat?.selectedFile?.type.startsWith("image/")) && (
+                          <div className="relative wf-full">
+                            <img
+                              src={chat?.message?.fileUrl || chat?.previewFile}
+                              alt="preview"
+                              className="w-70 sm:max-w-70 sm:w-auto max-h-40 h-auto object-contain rounded-sm"
+                            />
                             {chat?.loading && (
-                              <div className="absolute top-1 right-2 animate-spin rounded-full h-3 w-3 border-t-2  border-primary"></div>
+                              <div className="absolute inset-0 bg-black/50 grid place-items-center">
+                                <div className="animate-spin rounded-full h-7 w-7 border-t-3 border-primary dark:border-primary-hover"></div>
+                              </div>
                             )}
-                          </a>
-                        </>
-                      )}
+                          </div>
+                        )}
 
-                      {/* This is For Image Media Message */}
-                      {((chat?.message?.fileType &&
-                        chat?.message?.fileType.startsWith("image/")) ||
-                        chat?.selectedFile?.type.startsWith("image/")) && (
-                        <div className="relative">
-                          <img
-                            src={chat?.message?.fileUrl || chat?.previewFile}
-                            alt="preview"
-                            className="w-70 sm:max-w-70  max-h-40 h-auto object-contain rounded-sm"
-                          />
-                          {chat?.loading && (
-                            <div className="absolute inset-0 bg-black/50 grid place-items-center">
-                              <div className=" animate-spin rounded-full h-7 w-7 border-t-3   border-primary"></div>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                        {/* This is For Video Media Message */}
+                        {((chat?.message?.fileType &&
+                          chat?.message?.fileType.startsWith("video/")) ||
+                          chat?.selectedFile?.type.startsWith("video/")) && (
+                          <div className="relative">
+                            <video
+                              src={chat?.message?.fileUrl || chat?.previewFile}
+                              controls
+                              className="w-70 sm:max-w-70 max-h-40 h-auto object-cover"
+                              muted
+                            />
+                            {chat?.loading && (
+                              <div className="absolute inset-0 bg-black/50 grid place-items-center">
+                                <div className="animate-spin rounded-full h-7 w-7 border-t-3 border-primary dark:border-primary-hover"></div>
+                              </div>
+                            )}
+                          </div>
+                        )}
 
-                      {/* This is For Video Media Message */}
-                      {((chat?.message?.fileType &&
-                        chat?.message?.fileType.startsWith("video/")) ||
-                        chat?.selectedFile?.type.startsWith("video/")) && (
-                        <div className="relative">
-                          <video
-                            src={chat?.message?.fileUrl || chat?.previewFile}
-                            controls
-                            className="w-70 sm:max-w-70  max-h-40 h-auto  object-cover"
-                            muted
-                          />
-                          {chat?.loading && (
-                            <div className="absolute inset-0 bg-black/50 grid place-items-center">
-                              <div className=" animate-spin rounded-full h-7 w-7 border-t-3   border-primary"></div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      {/* {console.log(chat?.message?.fileType)} */}
+                        {/* This is For Text Message */}
+                        {chat?.message?.text || chat?.text}
+                      </span>
                     </div>
 
                     {/* Arrow */}
@@ -540,16 +538,17 @@ function ChatBox() {
                       className={`absolute top-0.5 w-2 h-2 rotate-45 ${
                         (chat?.sender_id._id || chat?.sender_id) ===
                         loggedInUser?._id
-                          ? "bg-user-bubble -right-1"
-                          : "bg-[#c5f7f287] -left-1"
+                          ? "bg-user-bubble dark:bg-user-bubble -right-1"
+                          : "bg-[#c5f7f287] dark:bg-secondary -left-1"
                       }`}
                     ></div>
 
                     {/* Timestamp */}
+
                     <span
-                      className={`text-[8px] whitespace-nowrap text-gray-500 ${
+                      className={`text-[8px] whitespace-nowrap text-gray-500 dark:text-text-secondary ${
                         (chat?.message?.text === null ||
-                          (chat?.text == null && chat?.selectedFile)) &&
+                          (chat?.message?.text && chat?.message?.fileUrl)) &&
                         "absolute bottom-2 right-4"
                       }`}
                     >
@@ -565,28 +564,30 @@ function ChatBox() {
 
             {typing &&
               (selectedGroup ? (
-                <div className="flex  mt-3">
-                  <div className="bg-gray-100 px-4 py-1 rounded-full text-xs text-gray-600 animate-pulse">
+                <div className="flex mt-3">
+                  <div className="bg-gray-100 dark:bg-secondary px-4 py-1 rounded-full text-xs text-gray-600 dark:text-text-secondary animate-pulse">
                     {typerName} is typing...
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center gap-1.5 mt-4 ml-2 w-fit px-2 py-2 shadow-sm ">
+                <div className="flex items-center gap-1.5 mt-4 ml-2 w-fit px-2 py-2 shadow-sm dark:bg-secondary">
                   <div className="flex items-center gap-1.5">
                     <span
-                      className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-[bounce_1s_infinite]"
+                      className="h-1.5 w-1.5 bg-gray-400 dark:bg-text-secondary rounded-full animate-[bounce_1s_infinite]"
                       style={{ animationDelay: "0ms" }}
                     />
                     <span
-                      className="h-1.5 w-1.5 bg-gray-400 rounded-full  animate-[bounce_1s_infinite]"
+                      className="h-1.5 w-1.5 bg-gray-400 dark:bg-text-secondary rounded-full animate-[bounce_1s_infinite]"
                       style={{ animationDelay: "150ms" }}
                     />
                     <span
-                      className="h-1.5 w-1.5   bg-gray-400 rounded-full animate-[bounce_1s_infinite]"
+                      className="h-1.5 w-1.5 bg-gray-400 dark:bg-text-secondary rounded-full animate-[bounce_1s_infinite]"
                       style={{ animationDelay: "300ms" }}
                     />
                   </div>
-                  <span className="text-red-500">{typerName}</span>
+                  <span className="text-red-500 dark:text-danger">
+                    {typerName}
+                  </span>
                 </div>
               ))}
           </>
@@ -597,18 +598,17 @@ function ChatBox() {
       {/* Message Input */}
       <form
         onSubmit={handleSubmit(handleSendMessage)}
-        className="p-3  bg-gray-50 relative shrink-0"
+        className="sm:p-3 px-1 py-3 bg-gray-50  dark:bg-background relative shrink-0"
         encType="multipart/form-data"
       >
         {/* Preview */}
         {filePreview && (
           <div
-            className={`bg-gray-300 h-auto max-h-40 px-2 rounded overflow-hidden absolute left-0 ${
-              fileType == "document" ? "-top-13" : " -top-38"
-            } flex flex-col gap-2 text-sm font-medium text-gray-800`}
+            className={`bg-gray-300 dark:bg-secondary h-auto max-h-40 px-2 rounded overflow-hidden absolute left-0 ${
+              fileType == "document" ? "-top-13" : "-top-38"
+            } flex flex-col gap-2 text-sm font-medium text-gray-800 dark:text-text-primary`}
           >
             <div className="relative">
-              {/* Add this wrapper */}
               {fileType === "image" ? (
                 <img
                   src={filePreview}
@@ -619,7 +619,7 @@ function ChatBox() {
                 <video
                   src={filePreview}
                   controls
-                  className="sm:w-70 h-40  "
+                  className="sm:w-70 h-40"
                   muted
                 />
               ) : fileType === "document" ? (
@@ -628,18 +628,20 @@ function ChatBox() {
                     href={filePreview}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white hover:bg-teal-100  border border-gray-300 rounded-lg p-1 px-3 w-70 flex items-center gap-3 transition-all duration-200 "
+                    className="bg-white dark:bg-background hover:bg-teal-100 dark:hover:bg-secondary/50 border border-gray-300 dark:border-light-border rounded-lg p-1 px-3 w-70 flex items-center gap-3 transition-all duration-200"
                   >
                     <div className="p-2 rounded-full">
-                      <FileText className="text-green-700" />
+                      <FileText className="text-green-700 dark:text-success" />
                     </div>
                     <div>
-                      <p className="font-medium text-xs line-clamp-2 text-zinc-700">
+                      <p className="font-medium text-xs line-clamp-2 text-zinc-700 dark:text-text-primary">
                         {docFileName}
                       </p>
-                      <p className="text-[10px] text-gray-500">Click to open</p>
+                      <p className="text-[10px] text-gray-500 dark:text-text-secondary">
+                        Click to open
+                      </p>
                       {sizeError && (
-                        <p className="text-red-500 animate-pulse text-xs">
+                        <p className="text-red-500 dark:text-danger animate-pulse text-xs">
                           {sizeError}
                         </p>
                       )}
@@ -665,9 +667,9 @@ function ChatBox() {
         )}
 
         {showMediaPicker && (
-          <div className="h-auto  w-42 ml-2 bg-gray-300/90 p-2 rounded-sm absolute left-0 -top-22 shadow-lg flex flex-col gap-2 text-sm font-medium text-gray-700">
+          <div className="h-auto w-42 ml-2 bg-gray-300 dark:bg-secondary p-2 rounded-sm absolute left-0 -top-23 shadow-lg flex flex-col gap-2 text-sm font-medium text-gray-700 dark:text-text-primary">
             {/* Image Option */}
-            <label className="flex items-center gap-2 hover:bg-gray-400/40  hover:text-black rounded p-2">
+            <label className="flex items-center gap-2 hover:bg-gray-400/40 dark:hover:bg-secondary/50 hover:text-black dark:hover:text-text-primary rounded p-2">
               <input
                 type="file"
                 className="hidden"
@@ -681,7 +683,7 @@ function ChatBox() {
             </label>
 
             {/* Document Option */}
-            <label className="flex items-center gap-2 hover:bg-gray-400/40 hover:text-black rounded p-2">
+            <label className="flex items-center gap-2 hover:bg-gray-400/40 dark:hover:bg-secondary/50 hover:text-black dark:hover:text-text-primary rounded p-2">
               <input
                 type="file"
                 className="hidden"
@@ -696,30 +698,30 @@ function ChatBox() {
           </div>
         )}
 
-        <div className="flex items-center  relative">
+        <div className="flex items-center relative">
           <button
             type="button"
-            className={`cursor-pointer ${
-              showPicker && "bg-gray-300"
+            className={`cursor-pointer hidden sm:block ${
+              showPicker && "bg-gray-300 dark:bg-secondary"
             } p-2 rounded-md`}
             onClick={() => {
               setShowPicker(!showPicker);
               setShowMediaPicker(false);
             }}
           >
-            <FaRegSmileBeam className="w-4.5 h-4.5 text-gray-600" />
+            <FaRegSmileBeam className="w-4.5 h-4.5 text-gray-600 dark:text-text-secondary" />
           </button>
           <button
             type="button"
             className={`cursor-pointer ${
-              showMediaPicker && "bg-gray-300"
+              showMediaPicker && "bg-gray-300 dark:bg-secondary"
             } p-2 rounded-md`}
             onClick={() => {
               setShowMediaPicker(!showMediaPicker);
               setShowPicker(false);
             }}
           >
-            <Paperclip className="w-4.5 h-4.5 text-gray-600" />
+            <Paperclip className="w-4.5 h-4.5 text-gray-600 dark:text-text-secondary" />
           </button>
 
           <input
@@ -728,7 +730,7 @@ function ChatBox() {
             autoComplete="off"
             autoCapitalize="sentences"
             autoFocus={true}
-            className="flex-1 border border-gray-300 bg-white rounded mr-2 py-1.5 px-2 sm:pr-12 focus:outline-none"
+            className="flex-1 border border-gray-300 dark:border-light-border bg-white dark:bg-background rounded mr-2 py-1.5 px-2 sm:pr-12 focus:outline-none dark:text-text-primary"
             {...register("message")}
             onChange={(e) => {
               selectedGroup &&
@@ -744,14 +746,13 @@ function ChatBox() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                if (e.target.value)
-                  handleSendMessage({ message: e.target.value });
+                if (e.target.value) handleSubmit(handleSendMessage)();
               }
             }}
           />
 
           {showPicker && (
-            <div className="hidden sm:block absolute bottom-12 left-2 z-50 rounded-lg shadow-sm border border-gray-300 h-[280px] overflow-hidden">
+            <div className="hidden sm:block absolute bottom-12 left-2 z-50 rounded-lg shadow-sm border border-gray-300 dark:border-light-border h-[280px] overflow-hidden">
               <Picker
                 data={data}
                 theme="light"
@@ -772,8 +773,10 @@ function ChatBox() {
           <button
             type="submit"
             className={`p-2 px-2.5 ${
-              sizeError ? "bg-primary/30" : "bg-primary hover:bg-primary-hover"
-            }  rounded  transition`}
+              sizeError
+                ? "bg-primary/30 dark:bg-primary-hover/30"
+                : "bg-primary hover:bg-primary-hover dark:bg-primary-hover dark:hover:bg-primary"
+            } rounded transition`}
             disabled={sizeError}
           >
             <SendHorizonal className="w-5 h-5 text-white" />

@@ -9,7 +9,7 @@ const UserCard = ({ user, setSideOpen }) => {
 
   return (
     <div
-      className=" flex p-2 ml-1 cursor-pointer"
+      className=" flex p-2 ml-1 mt-1 cursor-pointer"
       onClick={() => {
         dispatch(addselectedFriend(user));
         dispatch(removeSelectedGroup());
@@ -17,7 +17,7 @@ const UserCard = ({ user, setSideOpen }) => {
       }}
     >
       {/* User ProfilePic */}
-      <div className="h-8 w-8 relative grid place-items-center overflow-hidden">
+      <div className="sm:h-8 sm:w-8 h-9 w-9 relative grid place-items-center overflow-hidden">
         <img
           src={user.profilePic}
           alt="User Img"
@@ -26,7 +26,7 @@ const UserCard = ({ user, setSideOpen }) => {
 
         {/* Status Dot */}
         <div
-          className={`absolute bottom-0.5 right-0 h-2.5 w-2.5 rounded-full border-2 border-white ${
+          className={`absolute bottom-0.5 right-0 h-2.5 w-2.5 rounded-full border-2 border-white dark:border-light-border ${
             user.status == "online"
               ? "bg-green-500"
               : user.status == "recent"
@@ -39,7 +39,7 @@ const UserCard = ({ user, setSideOpen }) => {
       {/* User Name & Status & More Vertical Icon */}
       <div className="ml-3 flex-1 flex items-center justify-between w-full">
         <div>
-          <h2 className="text-gray-700 font-semibold text-sm">
+          <h2 className="text-text-normal font-semibold sm:text-sm text-[15px]">
             {user?.username}
           </h2>
           <p

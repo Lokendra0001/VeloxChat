@@ -127,7 +127,7 @@ const AddContact = ({ status, onCloseAddContact }) => {
     <div className="max-w-md w-full z-[100] bg-white dark:bg-secondary sm:rounded-xl shadow-md overflow-hidden flex flex-col h-full sm:h-[85dvh] select-none relative">
       {/* Close button */}
       <div
-        className="absolute top-5 right-5 text-other-bubble dark:text-primary-hover cursor-pointer hover:text-primary dark:hover:text-primary-hover"
+        className="absolute top-5 right-5 text-other-bubble  cursor-pointer hover:text-primary dark:hover:text-text-normal"
         onClick={() => onCloseAddContact(false)}
       >
         <X />

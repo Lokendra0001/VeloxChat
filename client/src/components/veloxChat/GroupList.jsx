@@ -118,12 +118,12 @@ const GroupList = ({ setSideOpen, searchTerm }) => {
 
         {filteredGroup.length > 0 && (
           <button
-            className="bg-primary mr-4 w-fit self-end flex mb-2 p-1.5 cursor-pointer  text-white text-xs items-center  gap-1 rounded-full group hover:rounded"
+            className="bg-primary dark:bg-primary-hover mr-4 w-fit self-end flex mb-2 p-1.5 cursor-pointer  text-white text-xs items-center  gap-1 rounded-full group hover:rounded "
             onClick={() => setShowCreateGroupForm(true)}
             title="Create New Group"
           >
             <Plus size={18} />{" "}
-            <span className="group-hover:inline-block hidden">
+            <span className="group-hover:inline-block sm:hidden ">
               Create Group
             </span>
           </button>

@@ -13,6 +13,10 @@ const chatSchema = new Schema({
         fileType: {
             type: String,
             default: null
+        },
+        fileName: {
+            type: String,
+            default: null
         }
     },
     sender_id: {

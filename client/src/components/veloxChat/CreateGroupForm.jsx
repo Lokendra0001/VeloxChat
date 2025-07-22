@@ -29,7 +29,7 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
   const [selectedFriends, setSelectedFriends] = useState([loggedInUser._id]);
   const [loading, setLoading] = useState(false);
   const apiKey = serverObj.apikey;
-  const navigate = useNavigate();
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const handleGetAllFriends = () => {
@@ -62,8 +62,14 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
   };
 
   const handleCreateGroupSubmit = (data) => {
-    setLoading(true);
+    setError(false);
     const formData = new FormData();
+
+    if (selectedFriends.length <= 1) {
+      setError(true);
+      return;
+    }
+    setLoading(true);
 
     // Append the actual file (not just the file name)
     if (data.groupProfileImg?.[0]) {
@@ -93,7 +99,7 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
 
   return (
     <form
-      className="max-w-lg w-full mx-auto bg-white shadow-md rounded-lg p-6 select-none"
+      className="max-w-lg w-full mx-auto bg-white dark:bg-secondary shadow-md rounded-lg p-6 select-none"
       encType="multipart/form-data"
       onSubmit={handleSubmit(handleCreateGroupSubmit)}
     >
@@ -101,8 +107,8 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
       <h2 className="text-2xl font-bold text-primary mb-6">Create Group</h2>
 
       {/* Group Icon + Name */}
-      <div className="flex items-center gap-10 mb-6">
-        <div className="w-16 h-16 bg-gray-200 border border-gray-300 rounded-full  overflow-hidden group flex items-center justify-center relative">
+      <div className="flex items-center gap-5 mb-6">
+        <div className="w-16 h-16 bg-gray-200 dark:bg-background dark:text-text-normal border border-gray-300 dark:border-transparent rounded-full  overflow-hidden group flex items-center justify-center relative">
           {groupProfileImg?.[0] ? (
             <img
               src={
@@ -126,16 +132,16 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
             <Camera size={20} />
           </button>
           {errors.groupProfileImg && (
-            <p className="text-red-500 text-xs ">
+            <p className="text-red-500 text-[10px] ">
               {errors.groupProfileImg.message}
             </p>
           )}
         </div>
-        <div className="grow flex flex-col items-center gap-1 ">
+        <div className="grow flex flex-col   gap-1 ">
           <input
             type="text"
             placeholder="Group Name"
-            className="w-full border border-gray-300 rounded px-3 py-1.5 outline-none focus:border-teal-400"
+            className="w-full border border-gray-300 dark:bg-light-border dark:border-zinc-600 dark:text-text-normal rounded px-3 py-1.5 outline-none focus:border-teal-400"
             {...register("groupName", {
               required: {
                 value: true,
@@ -150,27 +156,36 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
       </div>
 
       {selectedFriends.length > 0 && (
-        <div className="flex flex-wrap gap-2 text-sm mb-4">
-          {selectedFriends.map((id) => {
-            const friend = friends.find((f) => f._id === id);
-            return (
-              <div
-                key={id}
-                className="bg-teal-100 text-teal-800 px-3 py-1 rounded-full flex items-center gap-2"
-              >
-                <img
-                  src={
-                    id == loggedInUser._id
-                      ? loggedInUser?.profilePic
-                      : friend?.profilePic
-                  }
-                  alt=""
-                  className="w-5 h-5 rounded-full"
-                />
-                <span>{id == loggedInUser._id ? "You" : friend?.username}</span>
-              </div>
-            );
-          })}
+        <div className="mb-4">
+          <div className="flex flex-wrap gap-2 text-sm mb-1 ">
+            {selectedFriends.map((id) => {
+              const friend = friends.find((f) => f._id === id);
+              return (
+                <div
+                  key={id}
+                  className="bg-teal-100 dark:bg-primary-hover/60  text-teal-800 dark:text-text-normal px-3 py-1 rounded-full flex items-center gap-2"
+                >
+                  <img
+                    src={
+                      id == loggedInUser._id
+                        ? loggedInUser?.profilePic
+                        : friend?.profilePic
+                    }
+                    alt=""
+                    className="w-5 h-5 rounded-full"
+                  />
+                  <span>
+                    {id == loggedInUser._id ? "You" : friend?.username}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          {error && (
+            <p className="text-red-500 text-xs">
+              Group Should Be More than or equal to 2 Peoples!
+            </p>
+          )}
         </div>
       )}
 
@@ -183,7 +198,7 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
           {friends.map((friend, i) => (
             <li
               key={friend._id}
-              className="flex justify-between items-center bg-teal-50 p-2 rounded"
+              className="flex justify-between items-center bg-teal-50 dark:bg-light-border p-2 rounded"
             >
               <div className="flex gap-2 items-center">
                 <img
@@ -191,7 +206,7 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
                   alt=""
                   className="h-6 w-6 rounded"
                 />
-                <span className="text-zinc-700 font-medium text-sm">
+                <span className="text-zinc-700 font-medium text-sm dark:text-text-normal ">
                   {friend.username}
                 </span>
               </div>

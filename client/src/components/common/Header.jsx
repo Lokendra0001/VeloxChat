@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../assets/logoPng.png";
-import { Moon, MoonStar, Plus, SunMedium } from "lucide-react";
+import {
+  LucideBotMessageSquare,
+  LucideMessagesSquare,
+  MessageCircleHeartIcon,
+  MessageSquare,
+  Moon,
+  MoonStar,
+  Plus,
+  SunMedium,
+} from "lucide-react";
 import { useDispatch } from "react-redux";
 import { removeselectedFriend } from "../../store/slices/selectedFriendSlice";
 import { BsMoonStars } from "react-icons/bs";
@@ -35,27 +44,35 @@ const Header = ({ onAddContact }) => {
             dispatch(removeSelectedGroup());
           }}
         >
-          <img
-            src={logo}
-            className="h-7 w-7 select-none pointer-events-none"
-            alt="VeloxChat Logo"
-          />
-          <h1 className="text-primary font-bold text-2xl dark:text-primary">VeloxChat</h1>
+          <LucideMessagesSquare className="text-primary-hover dark:text-white/90 " size={23} />
+          <h1 className="text-primary font-bold text-2xl dark:text-white/90">
+            VeloxChat
+          </h1>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 ">
           <button
-            className={`text-primary cursor-pointer hover:bg-primary hover:text-white rounded-full p-1 transition-colors mr-1  md:mr-0`}
+            className={`text-primary dark:text-text-normal cursor-pointer hover:bg-primary hover:text-white  rounded-full p-1 transition-colors mr-1  md:mr-0`}
             title="Add New Contact"
             onClick={() => onAddContact(true)}
           >
-            <Plus size={21} />
+            <Plus size={20} />
           </button>
           <button
-            className={` text-zinc-700 dark:text-text-normal cursor-pointer  rounded-full p-1 transition-colors mr-7 md:mr-0 font-normal`}
+            className="text-zinc-700 dark:text-text-normal cursor-pointer rounded-full p-1 transition-colors mr-7 md:mr-0 font-normal"
             title="Switch Dark/Light"
             onClick={() => setIsDark(!isDark)}
           >
-            {!isDark ? <SunMedium size={20} /> : <MoonStar size={17} />}
+            <span
+              className={`flex items-center justify-center w-6 h-6 transition-transform duration-300 ease-in-out ${
+                isDark ? "rotate-20" : "rotate-0"
+              }`}
+            >
+              {!isDark ? (
+                <SunMedium size={20} />
+              ) : (
+                <MoonStar size={20} className="scale-[0.85]" />
+              )}
+            </span>
           </button>
         </div>
       </nav>

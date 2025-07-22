@@ -7,74 +7,146 @@
   --color-primary-hover: var(--primary-hover);
   --color-secondary: var(--secondary);
   --color-background: var(--background);
+
   --color-user-bubble: var(--user-bubble);
+  --color-text-on-user-bubble: var(--text-on-user-bubble);
+
   --color-other-bubble: var(--other-bubble);
+  --color-text-on-other-bubble: var(--text-on-other-bubble);
+
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-normal: var(--text-normal);
+
   --color-border: var(--border);
   --color-light-border: var(--light-border);
+
   --color-success: var(--success);
   --color-danger: var(--danger);
+  --color-dark-zinc-700: #3f3f46;
+  /* No root var for this, keeping hardcoded */
 }
+
 
 :root {
   --text-primary: #1E293B;
-  /* Slate-800 */
   --text-secondary: #374151;
   --text-normal: black;
-  /* Slate-500 */
+
   --primary: #0D9488;
-  /* Teal-600 */
   --primary-hover: #0F766E;
-  /* Teal-700 */
   --secondary: #E0F2F1;
-  /* Teal-100 */
   --background: #F9FAFB;
-  /* Gray-50 */
-  --user-bubble: #D1FAE5;
-  /* Green-100 */
+
+  --user-bubble: #BFE0AC;
+  --text-on-user-bubble: #0F172A;
+  /* Dark text */
+
   --other-bubble: #DBEAFE;
-  /* Blue-100 */
+  --text-on-other-bubble: #0F172A;
+
   --border: #E5E7EB;
-  /* Gray-200 */
   --light-border: #F3F4F6;
-  /* Gray-100 */
+
   --success: #10B981;
-  /* Emerald-500 */
   --danger: #EF4444;
-  /* Red-500 */
 }
 
-
-/* Dark Theme overrides */
+/* Dark Theme */
 .dark {
   --text-primary: #F3F4F6;
-  /* Gray-100 */
   --text-secondary: #9CA3AF;
-  /* Gray-400 */
   --text-normal: #FFFFFFDD;
+
   --primary: #14B8A6;
-  /* Teal-500 */
   --primary-hover: #0D9488;
-  /* Teal-600 */
   --secondary: #242424;
-  /* Slate-800 */
   --background: #0b0b0b;
-  /* Slate-900 */
+
   --user-bubble: #064E3B;
-  /* Green-900 */
+  --text-on-user-bubble: #FFFFFF;
+
   --other-bubble: #F3E8FF;
-  /* Blue-900 */
-  --border: bg-zinc-900;
-  /* Slate-700 */
+  --text-on-other-bubble: #1E1B4B;
+
+  --border: #18181B;
   --light-border: #27272A;
-  /* Slate-600 */
+
   --success: #34D399;
-  /* Emerald-400 */
   --danger: #F87171;
-  /* Red-400 */
 }
+
+/* Dark Theme overrides */
+.orange {
+  --primary: #F97316;
+  --primary-hover: #EA580C;
+
+  --user-bubble: #9A3412;
+  --text-on-user-bubble: #FFFFFF;
+
+  --other-bubble: #FFEDD5;
+  --text-on-other-bubble: #1E293B;
+
+  --light-border: #27272A;
+}
+
+
+.blue {
+  --primary: #3B82F6;
+  --primary-hover: #2563EB;
+
+  --user-bubble: #1f72f8;
+  --text-on-user-bubble: #FFFFFF;
+
+  --other-bubble: #DBEAFE;
+  --text-on-other-bubble: #1E293B;
+
+  --light-border: #27272A;
+}
+
+.indigo {
+  --primary: #6366F1;
+  --primary-hover: #4F46E5;
+
+  --user-bubble: #4F46E5;
+  --text-on-user-bubble: #FFFFFF;
+
+  --other-bubble: #E0E7FF;
+  --text-on-other-bubble: #1E293B;
+
+  --light-border: #27272A;
+}
+
+
+.purple {
+  --primary: #A855F7;
+  --primary-hover: #9333EA;
+
+  --user-bubble: #9c43e6;
+  --text-on-user-bubble: #FFFFFF;
+
+  --other-bubble: #F3E8FF;
+  --text-on-other-bubble: #1E293B;
+
+  --light-border: #27272A;
+}
+
+
+
+.pink {
+  --primary: #EC4899;
+  --primary-hover: #DB2777;
+
+  --user-bubble: #f51d73;
+  --text-on-user-bubble: #FFFFFF;
+
+  --other-bubble: #FCE7F3;
+  --text-on-other-bubble: #1E293B;
+
+  --light-border: #27272A;
+}
+
+
 
 
 

@@ -2,11 +2,12 @@ const Chats = require('../models/chat-model');
 
 const handleCreateMsg = async (req, res) => {
     try {
-        const { sender_id, receiver_id, group_id, text } = req.body;
+        const { sender_id, receiver_id, group_id, text, selectedFileName = null } = req.body;
         const msgPayload = {
             text: text || null,
             fileUrl: req.file ? `${req.file.path}` : null,
             fileType: req.file?.mimetype || null,
+            fileName: selectedFileName ? selectedFileName : null
         };
         const chat = await Chats.create({ message: msgPayload, sender_id, receiver_id, group_id });
         res.status(201).json({ message: "Message Sent", chat })

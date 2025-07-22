@@ -12,6 +12,7 @@ const NotifcationPage = () => {
   const [friendRequests, setFriendRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleGetAllRequests = () => {
     setLoading(true);
     axios
@@ -87,67 +88,73 @@ const NotifcationPage = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4 mt-15">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-        Contact Requests
-      </h2>
+    <div className="w-full min-h-screen  bg-background">
+      <div className="max-w-2xl mx-auto p-4 pt-20 bg-background  min-h-screen">
+        <h2 className="text-2xl font-semibold mb-4 text-text-primary dark:text-text-primary">
+          Contact Requests
+        </h2>
 
-      <div
-        className="absolute top-5 left-5 sm:top-10 sm:left-10 flex  text-primary hover:text-primary-hover cursor-pointer mb-4"
-        onClick={() => navigate(-1)}
-      >
-        <ChevronLeft /> <span>Back</span>
+        <div
+          className="absolute top-5 left-5  sm:top-10 sm:left-10 flex text-primary dark:text-text-secondary dark:hover:text-text-normal cursor-pointer mb-4"
+          onClick={() => navigate(-1)}
+        >
+          <ChevronLeft /> <span>Back</span>
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center mt-10">
+            <div className="w-8 h-8 border-4 border-teal-400 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : friendRequests.length === 0 ? (
+          <p className="text-text-secondary dark:text-text-secondary text-center">
+            No pending requests
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {friendRequests.map((req) => (
+              <div
+                key={req._id}
+                className="bg-white dark:bg-secondary shadow-sm border border-light-border dark:border-border rounded-lg p-4 flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-100 dark:bg-dark-zinc-700">
+                    <img
+                      src={req.from.profilePic}
+                      alt="User"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-text-primary dark:text-text-primary font-medium capitalize">
+                      {req.from.username}
+                    </h3>
+                    <p className="text-sm text-text-secondary dark:text-text-secondary">
+                      wants to connect
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    className="flex items-center gap-1 bg-primary hover:bg-primary-hover dark:bg-primary dark:hover:bg-primary-hover text-white text-sm px-3 py-1.5 rounded transition"
+                    onClick={() =>
+                      handleAcceptRequest(req._id, req.from._id, req.from)
+                    }
+                  >
+                    <Check size={16} /> Accept
+                  </button>
+                  <button
+                    className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1.5 rounded transition"
+                    onClick={() => handleRejectRequest(req._id, req.from._id)}
+                  >
+                    <X size={16} /> Reject
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-
-      {loading ? (
-        <div class="flex items-center justify-center mt-10 ">
-          <div class="w-8 h-8 border-4 border-teal-400 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : friendRequests.length === 0 ? (
-        <p className="text-gray-500 text-center">No pending requests</p>
-      ) : (
-        <div className="space-y-4">
-          {friendRequests.map((req) => (
-            <div
-              key={req._id}
-              className="bg-white shadow-sm border border-gray-200 rounded-lg p-4 flex items-center justify-between"
-            >
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-100">
-                  <img
-                    src={req.from.profilePic}
-                    alt="User"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <h3 className="text-gray-800 font-medium capitalize">
-                    {req.from.username}
-                  </h3>
-                  <p className="text-sm text-gray-500">wants to connect</p>
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  className="flex items-center gap-1 bg-primary text-white text-sm px-3 py-1.5 rounded hover:bg-primary-hover transition"
-                  onClick={() =>
-                    handleAcceptRequest(req._id, req.from._id, req.from)
-                  }
-                >
-                  <Check size={16} /> Accept
-                </button>
-                <button
-                  className="flex items-center gap-1 bg-red-500 text-white text-sm px-3 py-1.5 rounded hover:bg-red-600 transition"
-                  onClick={() => handleRejectRequest(req._id, req.from._id)}
-                >
-                  <X size={16} /> Reject
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 };

@@ -119,7 +119,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
   return (
     <>
       <div
-        className={`max-w-md border-l border-gray-300 dark:border-border mx-auto bg-white dark:bg-background h-[100dvh] md:flex flex-col shadow-lg overflow-hidden absolute w-full z-[90] md:relative transition-all duration-300 select-none ${
+        className={`max-w-md border-l border-gray-300 dark:border-border mx-auto bg-white dark:bg-background h-[100dvh] md:flex flex-col shadow-lg overflow-hidden absolute w-full z-[90] md:relative   select-none ${
           isSideOpen ? "right-0" : "-right-full"
         } md:right-0`}
       >
@@ -224,17 +224,17 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
         {/* Footer with Profile & Notifications */}
         <div className="py-1 h-14 flex justify-between items-center gap-4 px-4 border-t border-gray-300 dark:border-zinc-800">
           {/* User Info */}
-          <NavLink to="/profile" className="flex gap-3 items-center grow">
+          <NavLink to="/profile" className="flex gap-3 items-center grow group">
             <img
               src={loggedInUser?.profilePic}
               alt={loggedInUser?.username || "User"}
               className="h-9 w-9 rounded-full object-cover border border-gray-200 dark:border-light-border"
             />
-            <div className="flex flex-col">
+            <div className="flex flex-col ">
               <h1 className="text-sm font-medium text-gray-800 dark:text-text-primary -mb-0.5 truncate max-w-[120px]">
                 {loggedInUser?.username || "Guest"}
               </h1>
-              <button className="text-xs text-primary dark:text-primary-hover sm:text-gray-500 dark:sm:text-text-secondary hover:text-primary-hover dark:hover:text-primary transition-colors duration-200">
+              <button className="text-xs text-primary dark:text-primary-hover sm:text-gray-500 dark:sm:text-text-secondary group-hover:text-primary-hover dark:hover:text-primary transition-colors duration-200">
                 View Profile
               </button>
             </div>
@@ -246,7 +246,10 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
             className="p-2 rounded-full hover:bg-teal-100 dark:hover:bg-secondary transition-colors duration-200 relative"
             title="Notifications"
           >
-            <Bell size={20} className="text-gray-600 dark:text-text-secondary" />
+            <Bell
+              size={20}
+              className="text-gray-600 dark:text-text-secondary"
+            />
             {notify && (
               <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
             )}

@@ -2,7 +2,14 @@ import React, { useState, useEffect } from "react";
 import BubbleBackground from "../components/common/BubbleBackground.jsx";
 import logo from "../assets/logoPng.png";
 import { useForm } from "react-hook-form";
-import { AtSign, Eye, EyeClosed, LogIn, User } from "lucide-react";
+import {
+  AtSign,
+  Eye,
+  EyeClosed,
+  LogIn,
+  MessagesSquareIcon,
+  User,
+} from "lucide-react";
 import serverObj from "../config/config.js";
 import axios from "axios";
 import { useDispatch } from "react-redux";
@@ -69,12 +76,13 @@ const AuthLayout = () => {
       <div className="min-h-[20dvh] w-md sm:w-[90dvw] mx-1.5 lg:w-[65dvw] bg-background rounded-xl flex shadow-xl overflow-hidden">
         {/* Left Form */}
         <div className="w-full md:w-1/2 h-full px-3 py-5 sm:px-10 sm:py-10 flex flex-col bg-white dark:bg-secondary">
-          <div className="flex items-center mb-4">
-            <img
-              src={logo}
-              className="h-8 mr-2 select-none pointer-events-none"
+          <div className="flex items-center mb-4 gap-2">
+            <MessagesSquareIcon
+              className="text-primary-hover dark:text-white/80 "
+              size={35}
             />
-            <h1 className="text-3xl font-bold text-primary dark:text-primary-hover">
+
+            <h1 className="text-3xl font-bold text-primary dark:text-white/80">
               VeloxChat
             </h1>
           </div>
@@ -87,7 +95,7 @@ const AuthLayout = () => {
               onClick={() => setIsLogin(true)}
               className={`pb-2 px-1 font-medium ${
                 isLogin
-                  ? "text-primary dark:text-primary-hover border-b-2 border-primary dark:border-primary-hover"
+                  ? "text-primary dark:text-white border-b-2 border-primary "
                   : "text-gray-500 dark:text-text-secondary"
               }`}
             >
@@ -97,7 +105,7 @@ const AuthLayout = () => {
               onClick={() => setIsLogin(false)}
               className={`pb-2 px-1 font-medium ${
                 !isLogin
-                  ? "text-primary dark:text-primary-hover border-b-2 border-primary dark:border-primary-hover"
+                  ? "text-primary dark:text-white border-b-2 border-primary "
                   : "text-gray-500 dark:text-text-secondary"
               }`}
             >
@@ -117,11 +125,14 @@ const AuthLayout = () => {
                     <label className="block text-gray-600 dark:text-text-secondary text-sm font-medium mb-1">
                       Email
                     </label>
-                    <div className="w-full border-2 border-gray-300 dark:border-light-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#128C7E] focus:border-transparent relative flex items-center px-1">
-                      <AtSign size={20} className="text-gray-600 dark:text-text-secondary" />
+                    <div className="w-full border-2 border-gray-300 dark:border-dark-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#128C7E] focus:border-transparent relative flex items-center px-1">
+                      <AtSign
+                        size={20}
+                        className="text-gray-600 dark:text-text-secondary"
+                      />
                       <input
                         type="email"
-                        className="w-full px-2 py-2 outline-none border-l border-gray-300 dark:border-light-border ml-2 bg-transparent dark:text-text-primary"
+                        className="w-full px-2 py-2 outline-none border-l border-gray-300 dark:border-zinc-500 ml-2 bg-transparent dark:text-text-primary"
                         placeholder="your@email.com"
                         {...register("loginEmail", {
                           required: {
@@ -141,7 +152,7 @@ const AuthLayout = () => {
                     <label className="block text-gray-600 dark:text-text-secondary text-sm font-medium mb-1">
                       Password
                     </label>
-                    <div className="w-full border-2 border-gray-300 dark:border-light-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#128C7E] focus:border-transparent relative flex items-center px-1">
+                    <div className="w-full border-2 border-gray-300 dark:border-dark-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#128C7E] focus:border-transparent relative flex items-center px-1">
                       {isPassword ? (
                         <EyeClosed
                           size={20}
@@ -158,7 +169,7 @@ const AuthLayout = () => {
 
                       <input
                         type={isPassword ? "password" : "text"}
-                        className="w-full px-2 py-2 border-l border-gray-300 dark:border-light-border ml-2 outline-none bg-transparent dark:text-text-primary"
+                        className="w-full px-2 py-2 border-l border-gray-300 dark:border-dark-zinc-700 ml-2 outline-none bg-transparent dark:text-text-primary"
                         placeholder="••••••••"
                         {...register("loginPassword", {
                           required: {
@@ -174,9 +185,11 @@ const AuthLayout = () => {
                       </p>
                     )}
                   </div>
-                  <button className="w-full bg-primary hover:bg-primary-hover dark:bg-primary-hover dark:hover:bg-primary text-white py-2 px-4 rounded-md font-medium transition-colors shadow-md cursor-pointer flex items-center justify-center gap-1">
+                  <button className="w-full bg-primary hover:bg-primary-hover dark:bg-primary dark:hover:bg-primary-hover text-white py-2 px-4 rounded-md font-medium transition-colors shadow-md cursor-pointer flex items-center justify-center gap-1">
                     {loading ? (
-                      "Login..."
+                       <>
+                        <LogIn size={20} /> Login...
+                      </>
                     ) : (
                       <>
                         <LogIn size={20} /> Login
@@ -195,11 +208,14 @@ const AuthLayout = () => {
                     <label className="block text-gray-600 dark:text-text-secondary text-sm font-medium mb-1">
                       Name
                     </label>
-                    <div className="w-full border-2 border-gray-300 dark:border-light-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#128C7E] focus:border-transparent relative flex items-center px-1">
-                      <User size={20} className="text-gray-600 dark:text-text-secondary" />
+                    <div className="w-full border-2 border-gray-300 dark:border-dark-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#128C7E] focus:border-transparent relative flex items-center px-1">
+                      <User
+                        size={20}
+                        className="text-gray-600 dark:text-text-secondary"
+                      />
                       <input
                         type="text"
-                        className="w-full px-3 py-2 outline-none border-l-2 border-gray-300 dark:border-light-border ml-2 bg-transparent dark:text-text-primary"
+                        className="w-full px-3 py-2 outline-none border-l-2 border-gray-300 dark:border-dark-zinc-700 ml-2 bg-transparent dark:text-text-primary"
                         placeholder="Enter Username"
                         {...register("username", {
                           required: {
@@ -223,11 +239,14 @@ const AuthLayout = () => {
                     <label className="block text-gray-600 dark:text-text-secondary text-sm font-medium mb-1">
                       Email
                     </label>
-                    <div className="w-full border-2 border-gray-300 dark:border-light-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#128C7E] focus:border-transparent relative flex items-center px-1">
-                      <AtSign size={20} className="text-gray-600 dark:text-text-secondary" />
+                    <div className="w-full border-2 border-gray-300 dark:border-dark-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#128C7E] focus:border-transparent relative flex items-center px-1">
+                      <AtSign
+                        size={20}
+                        className="text-gray-600 dark:text-text-secondary"
+                      />
                       <input
                         type="text"
-                        className="w-full px-3 py-2 outline-none border-l-2 border-gray-300 dark:border-light-border ml-2 bg-transparent dark:text-text-primary"
+                        className="w-full px-3 py-2 outline-none border-l-2 border-gray-300 dark:border-dark-zinc-700 ml-2 bg-transparent dark:text-text-primary"
                         placeholder="your@email.com"
                         {...register("email", {
                           required: {
@@ -247,7 +266,7 @@ const AuthLayout = () => {
                     <label className="block text-gray-600 dark:text-text-secondary text-sm font-medium mb-1">
                       Password
                     </label>
-                    <div className="w-full border-2 border-gray-300 dark:border-light-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#128C7E] focus:border-transparent relative flex items-center px-1">
+                    <div className="w-full border-2 border-gray-300 dark:border-dark-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#128C7E] focus:border-transparent relative flex items-center px-1">
                       {isPassword ? (
                         <EyeClosed
                           size={20}
@@ -264,7 +283,7 @@ const AuthLayout = () => {
 
                       <input
                         type={isPassword ? "password" : "text"}
-                        className="w-full px-2 py-2 border-l border-gray-300 dark:border-light-border ml-2 outline-none bg-transparent dark:text-text-primary"
+                        className="w-full px-2 py-2 border-l border-gray-300 dark:border-dark-zinc-700 ml-2 outline-none bg-transparent dark:text-text-primary"
                         placeholder="••••••••"
                         {...register("password", {
                           required: {
@@ -286,9 +305,11 @@ const AuthLayout = () => {
                       </p>
                     )}
                   </div>
-                  <button className="w-full bg-primary hover:bg-primary-hover dark:bg-primary-hover dark:hover:bg-primary text-white py-2 px-4 rounded-md font-medium transition-colors shadow-md cursor-pointer flex items-center justify-center gap-1">
+                  <button className="w-full bg-primary hover:bg-primary-hover dark:bg-primary dark:hover:bg-primary-hover text-white py-2 px-4 rounded-md font-medium transition-colors shadow-md cursor-pointer flex items-center justify-center gap-1">
                     {loading ? (
-                      "Creating Account..."
+                     <>
+                        <LogIn size={20} /> Creating account...
+                      </>
                     ) : (
                       <>
                         <LogIn size={20} /> Create Account
@@ -302,7 +323,7 @@ const AuthLayout = () => {
         </div>
 
         {/* Right Image */}
-        <div className="w-1/2 hidden min-h-[20dvh] md:flex items-center justify-center bg-gradient-to-br from-[#075E54] to-[#128C7E]/60 relative overflow-hidden rounded-r-xl shadow-xl">
+        <div className="w-1/2 hidden min-h-[20dvh] md:flex items-center justify-center bg-gradient-to-br from-primary/30 to-primary-hover/60 relative overflow-hidden rounded-r-xl shadow-xl">
           {/* Animated Shape Accent */}
           <div className="absolute w-[150%] h-[150%] bg-[conic-gradient(at_top_left,_#25D366,_#075E54,_#128C7E,_#25D366)] opacity-10 rounded-full -top-1/2 -left-1/2 z-0" />
 
@@ -311,7 +332,7 @@ const AuthLayout = () => {
             <h2 className="text-4xl sm:text-3xl font-medium leading-tight drop-shadow-lg">
               Chat Smarter
               <br />
-              with <span className="text-green-400">VeloxChat</span>
+              with <span className="text-primary">VeloxChat</span>
             </h2>
             <p className="text-base sm:text-lg opacity-90 leading-relaxed">
               Experience real-time messaging thats fast, secure, and beautifully

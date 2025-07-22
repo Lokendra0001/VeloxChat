@@ -128,8 +128,7 @@ function ChatBox() {
     setShowPicker(false);
     setShowMediaPicker(false);
 
-    console.log(data);
-    if (!data?.message && data?.selectedMedia && data?.selectedDoc) return;
+    if (!data?.message && !data?.selectedMedia && !data?.selectedDoc) return;
 
     let selectedFile = null;
     let previewFile = null;
@@ -147,6 +146,7 @@ function ChatBox() {
 
     if (data.message) formData.append("text", data.message);
     if (selectedFile) formData.append("selectedFile", selectedFile);
+    if (selectedFile) formData.append("selectedFileName", selectedFile.name);
     formData.append("sender_id", loggedInUser._id);
     if (!isGroup) formData.append("receiver_id", selectedFriend?._id);
     if (isGroup) formData.append("group_id", selectedGroup._id);
@@ -246,7 +246,6 @@ function ChatBox() {
     const handleGroupStopTyping = (group_id) => {
       if (selectedGroup?._id === group_id) {
         setTyping(false);
-        console.log("hello");
       }
     };
 
@@ -285,7 +284,6 @@ function ChatBox() {
           (chat.receiver_id === loggedInUser?._id &&
             (chat?.sender_id?._id || chat?.sender_id) === selectedFriend?._id)
       );
-      // console.log(filtered);
     } else if (selectedGroup) {
       filtered = chats.filter(
         (chat) => chat.group_id?.toString() === selectedGroup._id?.toString()
@@ -311,7 +309,7 @@ function ChatBox() {
           </div>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary-hover to-green-600 mb-4 text-center">
+        <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary-hover to-primary mb-4 text-center">
           Welcome to VeloxChat
         </h1>
 
@@ -336,7 +334,7 @@ function ChatBox() {
   }
 
   return (
-    <div className="flex flex-col h-screen w-full bg-white dark:bg-background select-none">
+    <div className="flex flex-col h-screen w-full bg-white dark:bg-background select-none ">
       {/* Header */}
       <div className="sticky top-0 flex items-center justify-between bg-gray-50 dark:bg-background z-50 h-[10dvh] p-3 border-b border-gray-300 dark:border-light-border">
         <div className="flex items-center space-x-3 cursor-pointer w-full">
@@ -383,10 +381,11 @@ function ChatBox() {
 
       {/* Messages */}
       <div
-        className={`flex-1 grow overflow-y-auto py-2 px-2 w-full ${
+        className={`flex-1 grow overflow-y-auto   py-2 px-2 w-full  ${
           selectedGroup && "px-4"
         } z-0 min-h-0`}
       >
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/black-paper.png')] dark:bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat  bg-auto opacity-15 pointer-events-none"></div>
         {loading ? (
           <div className="flex justify-center items-center h-full">
             <span className="text-sm text-gray-500 dark:text-text-secondary">
@@ -410,7 +409,7 @@ function ChatBox() {
               return (
                 <div
                   key={chat?._id || index}
-                  className={`flex w-full mt-5 ${
+                  className={`flex w-full mt-5  ${
                     (chat?.sender_id._id || chat?.sender_id) ===
                     loggedInUser?._id
                       ? "justify-end"
@@ -421,8 +420,8 @@ function ChatBox() {
                     className={`w-fit max-w-[80%] sm:max-w-[60%] pl-2 pr-2 py-1 flex items-end justify-between gap-3 rounded-sm shadow-sm relative ${
                       (chat?.sender_id._id || chat?.sender_id) ===
                       loggedInUser?._id
-                        ? "bg-user-bubble dark:bg-user-bubble ml-auto"
-                        : `bg-[#c5f7f287] dark:bg-secondary mr-auto ${
+                        ? "bg-user-bubble dark:bg-user-bubble text-text-on-user-bubble ml-auto"
+                        : `bg-[#c5f7f287] dark:bg-secondary dark:text-text-on-other-bubble mr-auto ${
                             selectedGroup && "ml-2.5"
                           } ml-0 text-gray-900 dark:text-text-primary`
                     }`}
@@ -466,16 +465,16 @@ function ChatBox() {
                               }
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="hover:bg-teal-50/50 dark:hover:bg-secondary/50 p-1 pr-5 max-w-70 sm:w-auto flex items-center gap-3 transition-all duration-200"
+                              className="dark:hover:bg-secondary/50 p-1 pr-5 max-w-70 sm:w-auto flex items-center gap-3 transition-all duration-200"
                             >
                               <div className="p-2 rounded-full">
-                                <FileText className="text-green-700 dark:text-success" />
+                                <FileText className="text-text-on-user-bubble dark:text-success" />
                               </div>
                               <div>
-                                <p className="font-medium text-xs line-clamp-2 text-zinc-700 dark:text-text-primary">
-                                  View Document
+                                <p className="font-medium text-xs line-clamp-2 text-text-on-user-bubble dark:text-text-primary">
+                                  {chat?.message?.fileName}
                                 </p>
-                                <p className="text-[10px] text-gray-500 dark:text-text-secondary">
+                                <p className="text-[10px] text-gray-300 dark:text-text-secondary">
                                   Click to open
                                 </p>
                                 {sizeError && (
@@ -604,8 +603,8 @@ function ChatBox() {
         {/* Preview */}
         {filePreview && (
           <div
-            className={`bg-gray-300 dark:bg-secondary h-auto max-h-40 px-2 rounded overflow-hidden absolute left-0 ${
-              fileType == "document" ? "-top-13" : "-top-38"
+            className={`bg-gray-300 dark:bg-secondary/40 h-auto max-h-40 px-2 rounded overflow-hidden absolute left-2 ${
+              fileType == "document" ? "-top-13" : "-top-39"
             } flex flex-col gap-2 text-sm font-medium text-gray-800 dark:text-text-primary`}
           >
             <div className="relative">
@@ -669,7 +668,7 @@ function ChatBox() {
         {showMediaPicker && (
           <div className="h-auto w-42 ml-2 bg-gray-300 dark:bg-secondary p-2 rounded-sm absolute left-0 -top-23 shadow-lg flex flex-col gap-2 text-sm font-medium text-gray-700 dark:text-text-primary">
             {/* Image Option */}
-            <label className="flex items-center gap-2 hover:bg-gray-400/40 dark:hover:bg-secondary/50 hover:text-black dark:hover:text-text-primary rounded p-2">
+            <label className="flex items-center gap-2 hover:bg-gray-400/40 dark:hover:bg-primary/20 hover:text-black dark:text-white/70 dark:hover:text-white rounded p-2">
               <input
                 type="file"
                 className="hidden"
@@ -683,7 +682,7 @@ function ChatBox() {
             </label>
 
             {/* Document Option */}
-            <label className="flex items-center gap-2 hover:bg-gray-400/40 dark:hover:bg-secondary/50 hover:text-black dark:hover:text-text-primary rounded p-2">
+            <label className="flex items-center gap-2 hover:bg-gray-400/40 dark:hover:bg-primary/20 hover:text-black dark:text-white/70 dark:hover:text-white rounded p-2">
               <input
                 type="file"
                 className="hidden"
@@ -723,9 +722,9 @@ function ChatBox() {
           >
             <Paperclip className="w-4.5 h-4.5 text-gray-600 dark:text-text-secondary" />
           </button>
-
           <input
             type="text"
+            name="message"
             placeholder="Type a message..."
             autoComplete="off"
             autoCapitalize="sentences"
@@ -733,20 +732,31 @@ function ChatBox() {
             className="flex-1 border border-gray-300 dark:border-light-border bg-white dark:bg-background rounded mr-2 py-1.5 px-2 sm:pr-12 focus:outline-none dark:text-text-primary"
             {...register("message")}
             onChange={(e) => {
+              const value = e.target.value;
               selectedGroup &&
                 handleGroupTypings(
                   loggedInUser.username,
                   selectedGroup.groupMember,
                   selectedGroup._id,
-                  e.target.value.length
+                  value.length
                 );
-              selectedFriend &&
-                handleTyping(selectedFriend._id, e.target.value.length);
+              selectedFriend && handleTyping(selectedFriend._id, value.length);
+              setValue("message", value);
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                if (e.target.value) handleSubmit(handleSendMessage)();
+                const message = getValues("message");
+                const selectedMedia = getValues("selectedMedia");
+                const selectedDoc = getValues("selectedDoc");
+
+                if (
+                  message?.trim() ||
+                  (selectedMedia && selectedMedia.length > 0) ||
+                  (selectedDoc && selectedDoc.length > 0)
+                ) {
+                  handleSubmit(handleSendMessage)();
+                }
               }
             }}
           />
@@ -755,7 +765,7 @@ function ChatBox() {
             <div className="hidden sm:block absolute bottom-12 left-2 z-50 rounded-lg shadow-sm border border-gray-300 dark:border-light-border h-[280px] overflow-hidden">
               <Picker
                 data={data}
-                theme="light"
+                theme={localStorage.getItem("theme") || "light"}
                 previewPosition="none"
                 searchPosition="none"
                 skinTonePosition="none"

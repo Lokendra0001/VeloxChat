@@ -35,28 +35,40 @@ const App = () => {
         });
       })
       .catch((err) => console.log(err.response.message))
-      .finally(() => setLoading(false));
+      .finally(() => setTimeout(() => setLoading(false), 1000));
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const theme = localStorage.getItem("theme");
+    const secondaryTheme = localStorage.getItem("secondaryTheme");
+    if (theme == "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+    root.classList.add(secondaryTheme);
   }, []);
 
   if (loading)
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-teal-50">
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-teal-50 bg-secondary dark:from-background dark:to-secondary">
         {/* Animated Logo Container */}
         <div className="relative mb-6 w-32 h-32">
           {/* Glow Effect */}
-          <div className="absolute inset-0 bg-teal-200 rounded-full opacity-20 blur-md animate-pulse"></div>
+          <div className="absolute inset-0 bg-primary dark:bg-transparent rounded-full opacity-20 blur-md animate-pulse"></div>
 
           {/* Dual Inverse Rotating Lines */}
           <div className="relative w-full h-full">
             {/* Outer line - rotates clockwise */}
-            <div className="absolute inset-0 border-3 border-t-transparent border-r-teal-600 border-b-transparent border-l-teal-600 rounded-full animate-rotate-cw"></div>
+            <div className="absolute inset-0 border-3 border-t-transparent border-primary-hover  border-b-transparent border-l-primary-hover rounded-full animate-rotate-cw"></div>
             {/* Inner line - rotates counter-clockwise */}
-            <div className="absolute inset-5 border-3 border-t-teal-400 border-r-transparent border-b-teal-400 border-l-transparent rounded-full animate-rotate-ccw"></div>
+            <div className="absolute inset-5 border-3 border-t-primary border-r-transparent border-b-primary border-l-transparent rounded-full animate-rotate-ccw"></div>
           </div>
 
           {/* Center Brand Mark */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-12 h-12 p-1 bg-teal-600 text-white rounded-full flex items-center justify-center shadow-inner">
+            <div className="w-12 h-12 p-1 bg-primary text-white rounded-full flex items-center justify-center shadow-inner">
               <MessageCircleMore />
             </div>
           </div>

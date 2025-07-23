@@ -127,7 +127,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
         <Header onAddContact={setShowAddContact} />
 
         {/* Search Bar */}
-        <div className="px-2 mt-2  dark:bg-transparent">
+        <div className="px-2 my-3   dark:bg-transparent">
           <div className="relative flex w-full border border-gray-300 dark:border-border rounded bg-white dark:bg-secondary px-2 py-0.5">
             <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
               <Search className="h-4.5 w-4.5 text-gray-400 dark:text-text-secondary" />
@@ -143,7 +143,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
         </div>
 
         {/* Types of Chat individual or group */}
-        <div className="flex gap-2 w-full justify-start pl-3 items-center border-b border-transparent text-sm pt-2">
+        <div className="flex gap-2 w-full justify-start pl-3 items-center border-b border-transparent text-sm ">
           <button
             onClick={() => setIsGroup(false)}
             className={`pb-1 px-1 font-medium ${

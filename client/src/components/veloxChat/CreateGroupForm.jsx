@@ -230,8 +230,8 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
       <button
         className={`w-full ${
           loading
-            ? "bg-teal-600/60 cursor-not-allowed"
-            : "bg-teal-600 hover:bg-teal-700 "
+            ? "bg-primary/30 cursor-not-allowed"
+            : "bg-primary hover:bg-primary-hover "
         }  text-white py-2 rounded transition flex items-center justify-center gap-1`}
         type="submit"
         disabled={loading}

@@ -132,6 +132,7 @@ function ChatBox() {
 
     let selectedFile = null;
     let previewFile = null;
+
     if (data.selectedMedia && data.selectedMedia.length > 0) {
       selectedFile = data.selectedMedia[0];
       previewFile = URL.createObjectURL(selectedFile);
@@ -301,7 +302,7 @@ function ChatBox() {
   // If No Friends or Group Selected Return SomeThing
   if (!selectedGroup && !selectedFriend) {
     return (
-      <div className="h-[100dvh] w-full flex flex-col justify-center items-center bg-gradient-to-br from-gray-50 to-white dark:from-background dark:to-secondary">
+      <div className="h-[100dvh] select-none w-full flex flex-col justify-center items-center bg-gradient-to-br from-gray-50 to-white dark:from-background dark:to-secondary">
         <div className="relative mb-10">
           <div className="absolute -inset-4 bg-teal-100/10 dark:bg-primary/10 blur-xl rounded-full" />
           <div className="relative w-28 h-28 flex items-center justify-center rounded-full shadow-lg dark:bg-secondary">
@@ -686,7 +687,7 @@ function ChatBox() {
               <input
                 type="file"
                 className="hidden"
-                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
+                accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain"
                 {...register("selectedDoc", {
                   onChange: handleFileChange,
                 })}

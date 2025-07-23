@@ -62,9 +62,10 @@ const UserCard = ({ user, setSideOpen }) => {
             // handleDropdownToggle(index);
           }}
           className="relative "
+          title="Functionality Come in Next Update!"
         >
           <MoreVertical
-            className="text-gray-400 cursor-pointer hover:text-teal-800"
+            className="text-gray-400 cursor-pointer hover:text-primary-hover"
             size={17}
           />
           {/* <div

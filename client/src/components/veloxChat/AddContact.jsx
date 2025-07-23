@@ -124,7 +124,7 @@ const AddContact = ({ status, onCloseAddContact }) => {
   }, [searchTerm, users, loggedInUser._id]);
 
   return (
-    <div className="max-w-md w-full z-[100] bg-white dark:bg-secondary sm:rounded-xl shadow-md overflow-hidden flex flex-col h-full sm:h-[85dvh] select-none relative">
+    <div className="max-w-lg  md:max-w-md w-full z-[100] bg-white dark:bg-secondary sm:rounded-xl shadow-md overflow-hidden flex flex-col h-full sm:h-[85dvh] select-none relative">
       {/* Close button */}
       <div
         className="absolute top-5 right-5 text-other-bubble  cursor-pointer hover:text-primary dark:hover:text-text-normal"
@@ -153,7 +153,7 @@ const AddContact = ({ status, onCloseAddContact }) => {
           <input
             type="text"
             placeholder="Search contacts..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-light-border rounded bg-gray-50 dark:bg-secondary focus:outline-none transition-all dark:text-text-primary"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300  dark:border-light-border rounded bg-gray-50 dark:bg-background/50 focus:outline-none transition-all dark:text-text-primary"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

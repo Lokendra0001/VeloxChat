@@ -38,14 +38,19 @@ const Header = ({ onAddContact }) => {
 
       <nav className="p-4 h-[10dvh] w-full  flex items-center justify-between border-b border-gray-300   dark:border-light-border select-none">
         <div
-          className="flex items-center space-x-2 cursor-pointer"
+          className="flex items-center space-x-1 cursor-pointer"
           onClick={() => {
             dispatch(removeselectedFriend());
             dispatch(removeSelectedGroup());
           }}
         >
-          <LucideMessagesSquare className="text-primary-hover dark:text-white/90 " size={23} />
-          <h1 className="text-primary font-bold text-2xl dark:text-white/90">
+          <div className="p-2 rounded-2xl border border-gray-300 shadow-xl dark:border-light-border">
+            <LucideMessagesSquare
+              className="text-primary-hover dark:text-primary  "
+              size={23}
+            />
+          </div>
+          <h1 className="text-primary font-bold text-2xl dark:text-white/95">
             VeloxChat
           </h1>
         </div>
@@ -58,7 +63,7 @@ const Header = ({ onAddContact }) => {
             <Plus size={20} />
           </button>
           <button
-            className="text-zinc-700 dark:text-text-normal cursor-pointer rounded-full p-1 transition-colors mr-7 md:mr-0 font-normal"
+            className="text-zinc-700 dark:text-text-normal cursor-pointer rounded-full p-1 transition-colors mr-9 md:mr-0 font-normal"
             title="Switch Dark/Light"
             onClick={() => setIsDark(!isDark)}
           >

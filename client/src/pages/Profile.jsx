@@ -85,7 +85,7 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background dark:bg-background p-4 md:p-6 flex flex-col items-center relative">
       <NavLink
-        className="absolute top-5 left-5 flex items-center gap-1 text-text-secondary hover:text-text-primary dark:text-text-secondary dark:hover:text-text-primary cursor-pointer"
+        className="fixed top-7  z-50 left-5 flex items-center gap-1 text-text-secondary hover:text-text-primary dark:text-white  dark:sm:text-text-secondary dark:hover:text-text-primary cursor-pointer"
         onClick={() => navigate(-1)}
       >
         <ChevronLeft size={20} /> <span className="text-sm">Back</span>
@@ -188,7 +188,7 @@ const Profile = () => {
             {/* Actions */}
             <div className="flex flex-col md:flex-row md:items-start gap-3 mt-4 md:mt-0">
               <button
-                className="flex items-center justify-center gap-2 cursor-pointer bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded-lg font-medium"
+                className="flex items-center justify-center gap-2 cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium"
                 onClick={handleLogout}
               >
                 <LogOut size={16} />
@@ -228,7 +228,7 @@ const Profile = () => {
                       className={`${theme.bg} h-24 rounded-lg cursor-pointer relative overflow-hidden transition-transform hover:scale-105 shadow-md`}
                     >
                       {selectedTheme === theme.name && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 ">
                           <Check size={24} className="text-white" />
                         </div>
                       )}

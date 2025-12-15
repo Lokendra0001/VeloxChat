@@ -508,12 +508,10 @@ function ChatBox() {
 
                       <span className="flex flex-col gap-1 text-normal dark:text-text-normal">
                         {/* This is For Document Message */}
-                        {((chat?.message?.fileType &&
-                          chat?.message?.fileType === "application/pdf") ||
-                          chat?.selectedFile?.type.startsWith(
-                            "application/"
-                          )) && (
-                          <>
+                        {chat?.message?.fileType &&
+                          !chat?.message?.fileType.startsWith("image/") &&
+                          !chat?.message?.fileType.startsWith("video/") &&
+                          !chat?.message?.fileType.startsWith("audio/") && (
                             <a
                               href={
                                 chat?.message?.fileUrl || chat?.selectedFile[0]
@@ -542,8 +540,7 @@ function ChatBox() {
                                 <div className="absolute top-1 right-2 animate-spin rounded-full h-3 w-3 border-t-2 border-primary dark:border-primary-hover"></div>
                               )}
                             </a>
-                          </>
-                        )}
+                          )}
 
                         {/* This is For Image Media Message */}
                         {((chat?.message?.fileType &&

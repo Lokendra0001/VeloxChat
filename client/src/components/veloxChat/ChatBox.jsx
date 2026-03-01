@@ -419,9 +419,9 @@ function ChatBox() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 mr-2">
+        <div className="flex items-center gap-4 mr-10 md:mr-2">
           <button
-            className="text-gray-500 dark:text-text-secondary hover:text-gray-700 dark:hover:text-text-primary"
+            className="text-gray-500 dark:text-text-secondary hover:text-gray-700 dark:hover:text-text-primary cursor-pointer flex items-center gap-2 bg-primary/10 dark:bg-secondary p-2 rounded-md hover:bg-primary/20 dark:hover:bg-secondary/20 transition-colors text-sm font-semibold text-primary dark:text-primary-hover"
             onClick={() => {
               let roomId = null;
               if (selectedGroup) {
@@ -453,12 +453,9 @@ function ChatBox() {
             }}
             title="Video Call"
           >
-            <Video size={22} />
+            <Video size={23} className="shrink-0 text-primary" /> Call
           </button>
 
-          <button className="text-gray-500 dark:text-text-secondary hover:text-gray-700 dark:hover:text-text-primary hidden md:block">
-            <MoreVertical size={18} />
-          </button>
         </div>
       </div>
 
@@ -530,7 +527,7 @@ function ChatBox() {
                   } px-1`}
                 >
                   <div
-                    className={`w-fit max-w-[80%] sm:max-w-[60%] pl-2 pr-2 py-1 flex items-end justify-between gap-3 rounded-sm shadow-sm relative ${
+                    className={`w-fit max-w-[80%] sm:max-w-[60%] pl-2 pr-2 py-1 break-words whitespace-pre-wrap  flex items-end justify-between gap-3 rounded-sm shadow-sm relative ${
                       (chat?.sender_id._id || chat?.sender_id) ===
                       loggedInUser?._id
                         ? "bg-user-bubble dark:bg-user-bubble text-text-on-user-bubble ml-auto"
@@ -638,7 +635,9 @@ function ChatBox() {
                         )}
 
                         {/* This is For Text Message */}
-                        {chat?.message?.text || chat?.text}
+                        <div className="whitespace-pre-wrap break-words max-w-full overflow-hidden">
+                          {chat?.message?.text || chat?.text}
+                        </div>
                       </span>
                     </div>
 

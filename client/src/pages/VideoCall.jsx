@@ -32,25 +32,27 @@ const VideoCall = () => {
     let callTimeout = null;
 
     if (callState === "waiting") {
-      if (!audioRef.current) {
-        audioRef.current = new Audio(DIAL_TONE_PATH);
-        audioRef.current.loop = true;
-      }
-      audioRef.current.play().catch((e) => console.log("Audio play failed", e));
+      // Audio for caller is removed as per user request (they want sound to receiver)
 
       if (isCaller && receiverId) {
         callTimeout = setTimeout(async () => {
           sendMissedCall();
-          stopAudio();
           navigate("/");
-        }, 20000);
+        }, 30000); // 30 seconds for better production reliability
       }
     }
 
     if (callState === "connected") {
       stopAudio();
       if (callTimeout) clearTimeout(callTimeout);
-      initMeeting();
+
+      // Delay init until container is definitely visible
+      const timer = setTimeout(() => {
+        if (containerRef.current) {
+          initMeeting();
+        }
+      }, 500);
+      return () => clearTimeout(timer);
     }
 
     const handleCallAccepted = (data) => {
@@ -112,29 +114,50 @@ const VideoCall = () => {
   };
 
   const initMeeting = async () => {
-    const appID = Number(import.meta.env.VITE_ZEGO_APP_ID);
-    const serverSecret = import.meta.env.VITE_ZEGO_SERVER_SECRET;
-    const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
-      appID,
-      serverSecret,
-      roomId,
-      user._id || Date.now().toString(),
-      user.username || "Guest",
-    );
-    const zp = ZegoUIKitPrebuilt.create(kitToken);
-    zpRef.current = zp;
+    try {
+      const appID = Number(import.meta.env.VITE_ZEGO_APP_ID);
+      const serverSecret = import.meta.env.VITE_ZEGO_SERVER_SECRET;
 
-    zp.joinRoom({
-      container: containerRef.current,
-      turnOnCameraWhenJoining: true,
-      turnOnMicrophoneWhenJoining: true,
-      showPreJoinView: false,
-      scenario: { mode: ZegoUIKitPrebuilt.OneONoneCall },
-      onLeaveRoom: () => {
-        if (isCaller) socket.emit("call-cancelled", { roomId, receiverId });
-        navigate("/");
-      },
-    });
+      if (!appID || !serverSecret) {
+        console.error("Zego Credentials Missing. Check Enviroment Variables.");
+        return;
+      }
+
+      console.log("Generating Kit Token for Room:", roomId);
+
+      const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
+        appID,
+        serverSecret,
+        roomId,
+        user?._id || Date.now().toString(),
+        user?.username || "Guest",
+      );
+
+      if (!kitToken) {
+        console.error("Token Generation Failed");
+        return;
+      }
+
+      const zp = ZegoUIKitPrebuilt.create(kitToken);
+      zpRef.current = zp;
+
+      console.log("Joining Room with Container:", containerRef.current);
+
+      zp.joinRoom({
+        container: containerRef.current,
+        turnOnCameraWhenJoining: true,
+        turnOnMicrophoneWhenJoining: true,
+        showPreJoinView: false,
+        scenario: { mode: ZegoUIKitPrebuilt.OneONoneCall },
+        onLeaveRoom: () => {
+          if (isCaller) socket.emit("call-cancelled", { roomId, receiverId });
+          navigate("/");
+          window.location.reload();
+        },
+      });
+    } catch (err) {
+      console.error("Zego Join Error:", err);
+    }
   };
 
   return (

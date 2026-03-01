@@ -3,48 +3,78 @@ import { useNavigate } from "react-router-dom";
 import socket from "../../config/socket";
 import { Phone, PhoneOff } from "lucide-react";
 
-const RINGING_PATH = "/audio/ringing.mp3";
+const RINGING_PATH = "/audio/dialtone.mp3";
 
 const CallListener = () => {
   const navigate = useNavigate();
   const [incomingCall, setIncomingCall] = useState(null);
   const audioRef = useRef(null);
 
-  useEffect(() => {
-    const handleIncomingCall = (data) => {
-      setIncomingCall(data);
-      if (!audioRef.current) {
-        audioRef.current = new Audio(RINGING_PATH);
-        audioRef.current.loop = true;
-      }
-      audioRef.current
-        .play()
-        .catch((err) => console.log("Audio play failed", err));
-    };
-
-    const handleCallCancelled = ({ roomId }) => {
-      if (incomingCall?.roomId === roomId) {
-        stopRinging();
-        setIncomingCall(null);
-      }
-    };
-
-    socket.on("incoming-call", handleIncomingCall);
-    socket.on("call-cancelled", handleCallCancelled);
-
-    return () => {
-      stopRinging();
-      socket.off("incoming-call", handleIncomingCall);
-      socket.off("call-cancelled", handleCallCancelled);
-    };
-  }, [incomingCall]);
-
+  // 🔥 STOP RING FUNCTION
   const stopRinging = () => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
   };
+
+  // 🔥 UNLOCK AUDIO (IMPORTANT FOR CHROME AUTOPLAY)
+  useEffect(() => {
+    const unlockAudio = () => {
+      if (!audioRef.current) {
+        audioRef.current = new Audio(RINGING_PATH);
+        audioRef.current.loop = true;
+      }
+
+      audioRef.current
+        .play()
+        .then(() => {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        })
+        .catch(() => {});
+
+      window.removeEventListener("click", unlockAudio);
+    };
+
+    window.addEventListener("click", unlockAudio);
+  }, []);
+
+  // 🔥 SOCKET LISTENER
+  useEffect(() => {
+    const handleIncomingCall = (data) => {
+      console.log("Incoming call:", data);
+      setIncomingCall(data);
+    };
+
+    const handleCallCancelled = ({ roomId }) => {
+      setIncomingCall((prev) => (prev?.roomId === roomId ? null : prev));
+    };
+
+    socket.on("incoming-call", handleIncomingCall);
+    socket.on("call-cancelled", handleCallCancelled);
+
+    return () => {
+      socket.off("incoming-call", handleIncomingCall);
+      socket.off("call-cancelled", handleCallCancelled);
+    };
+  }, []);
+
+  // 🔥 PLAY / STOP RINGTONE
+  useEffect(() => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(RINGING_PATH);
+      audioRef.current.loop = true;
+    }
+
+    if (incomingCall) {
+      audioRef.current.play().catch((err) => {
+        console.log("Ringtone blocked:", err);
+      });
+    } else {
+      stopRinging();
+    }
+  }, [incomingCall]);
 
   if (!incomingCall) return null;
 
@@ -66,11 +96,13 @@ const CallListener = () => {
         <h2 className="text-2xl font-bold text-white mb-1">
           {incomingCall.callerName}
         </h2>
+
         <p className="text-zinc-400 mb-10">
           {incomingCall.isGroup ? "Group Call" : "Incoming Video Call"}
         </p>
 
         <div className="flex gap-12">
+          {/* ❌ DECLINE */}
           <button
             onClick={() => {
               socket.emit("call-declined", {
@@ -88,6 +120,7 @@ const CallListener = () => {
             <span className="text-xs text-zinc-500 font-medium">Decline</span>
           </button>
 
+          {/* ✅ ACCEPT */}
           <button
             onClick={() => {
               stopRinging();

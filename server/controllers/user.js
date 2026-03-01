@@ -80,6 +80,7 @@ const handleGetAllFriends = async (req, res) => {
         const aiUser = await Users.findOne({ email: "ai@veloxchat.com" });
 
         const friends = [...user.friends, aiUser];
+        console.log(friends)
         res.status(200).json(friends)
     } catch (error) {
         res.status(500).json({ error: error.message })

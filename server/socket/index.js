@@ -184,6 +184,69 @@ const setUpSocket = (server) => {
             });
         })
 
+        socket.on('call-user', (data) => {
+            const { roomId, callerName, callerProfile, receiverId, isGroup, groupMembers, groupName } = data;
+
+            if (isGroup && groupMembers) {
+                // Send to all group members except sender
+                groupMembers.forEach(member => {
+                    const memberId = typeof member === 'object' ? member?._id : member;
+                    const senderId = socket.userId;
+
+                    // Ensure we don't send back to sender (comparing strings to be safe)
+                    if (String(memberId) !== String(senderId)) {
+                        const socketId = userSocketMap[memberId];
+                        if (socketId) {
+                            io.to(socketId).emit('incoming-call', {
+                                roomId,
+                                callerName,
+                                callerProfile,
+                                isGroup: true,
+                                groupName,
+                                groupId: receiverId
+                            });
+                        }
+                    }
+                });
+            } else {
+                // 1-on-1 call
+                const socketId = userSocketMap[receiverId];
+                if (socketId) {
+                    io.to(socketId).emit('incoming-call', {
+                        roomId,
+                        callerName,
+                        callerProfile,
+                        isGroup: false,
+                        callerId: socket.userId
+                    });
+                }
+            }
+        });
+
+        socket.on('call-declined', (data) => {
+            const { callerId, roomId } = data;
+            const socketId = userSocketMap[callerId];
+            if (socketId) {
+                io.to(socketId).emit('call-declined-by-callee', { roomId });
+            }
+        });
+
+        socket.on('call-accepted', (data) => {
+            const { callerId, roomId } = data;
+            const socketId = userSocketMap[callerId];
+            if (socketId) {
+                io.to(socketId).emit('call-accepted', { roomId });
+            }
+        });
+
+        socket.on('call-cancelled', (data) => {
+            const { roomId, receiverId } = data;
+            const socketId = userSocketMap[receiverId];
+            if (socketId) {
+                io.to(socketId).emit('call-cancelled', { roomId });
+            }
+        });
+
         socket.on('logged-out', handleUserDisconnect);
         socket.on('disconnect', handleUserDisconnect);
     });

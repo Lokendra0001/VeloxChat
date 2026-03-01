@@ -32,19 +32,21 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    const handleGetAllFriends = () => {
-      axios
-        .get(`${apiKey}/user/getAllFriends`, {
-          withCredentials: true,
-        })
-        .then((res) => setFriends(res.data.friends))
-        .catch((err) => console.log(err));
+    const handleGetAllFriends = async () => {
+      try { 
+        const res = await axios.get(`${apiKey}/user/getAllFriends`, {
+            withCredentials: true,
+          })
+         setFriends(res.data)}
+        catch (error) {
+          console.log(error);
+        }
     };
     handleGetAllFriends();
   }, []);
 
   const handleAddFriend = (friendId) => {
-    const isAlreadyFriend = selectedFriends.find((e) => e == friendId);
+    const isAlreadyFriend = selectedFriends?.find((e) => e == friendId);
     if (isAlreadyFriend) {
       setSelectedFriends(selectedFriends.filter((e) => e !== friendId));
     } else {
@@ -53,7 +55,7 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
   };
 
   const checkAddedFriend = (friendId) => {
-    const isAlreadyFriend = selectedFriends.find((e) => e == friendId);
+    const isAlreadyFriend = selectedFriends?.find((e) => e == friendId);
     if (isAlreadyFriend) {
       return true;
     } else {
@@ -155,11 +157,11 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
         </div>
       </div>
 
-      {selectedFriends.length > 0 && (
+      {selectedFriends?.length > 0 && (
         <div className="mb-4">
           <div className="flex flex-wrap gap-2 text-sm mb-1 ">
-            {selectedFriends.map((id) => {
-              const friend = friends.find((f) => f._id === id);
+            {selectedFriends?.map((id) => {
+              const friend = friends?.find((f) => f._id === id);
               return (
                 <div
                   key={id}
@@ -195,7 +197,7 @@ const CreateGroupForm = ({ setShowCreateGroupForm }) => {
           Select Friends
         </h3>
         <ul className="space-y-2 max-h-40 overflow-y-auto">
-          {friends.map((friend, i) => (
+          {friends?.map((friend, i) => (
             <li
               key={friend._id}
               className="flex justify-between items-center bg-teal-50 dark:bg-light-border p-2 rounded"

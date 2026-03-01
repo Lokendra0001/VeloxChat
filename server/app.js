@@ -20,7 +20,7 @@ mongoConnection(process.env.MONGO_URI)
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-const allowedOrigin = ["http://localhost:5173", "https://veloxchat.vercel.app"]
+const allowedOrigin = ["http://localhost:5173", "https://veloxchat.vercel.app", "http://10.105.148.71:5173/"]
 app.use(cors({
     origin: allowedOrigin,
     credentials: true,

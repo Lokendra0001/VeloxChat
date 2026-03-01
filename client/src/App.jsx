@@ -14,6 +14,9 @@ import socket from "./config/socket";
 import { useSelector } from "react-redux";
 import { Toaster, toast } from "react-hot-toast";
 import { MessageCircleMore } from "lucide-react";
+import VideoCall from "./pages/VideoCall";
+import CallListener from "./components/common/CallListener";
+
 
 const App = () => {
   const dispatch = useDispatch();
@@ -79,6 +82,7 @@ const App = () => {
   return (
     <div className="max-w-[1850px] mx-auto w-full ">
       <BrowserRouter>
+        <CallListener />
         <Routes>
           <Route
             path="/"
@@ -107,12 +111,22 @@ const App = () => {
               </PrivateRoute>
             }
           />
+
+
           <Route
             path="/auth"
             element={
               <PublicRoute>
                 <AuthLayout />
               </PublicRoute>
+            }
+          />
+          <Route
+            path="/room/:roomId"
+            element={
+              <PrivateRoute>
+                <VideoCall />
+              </PrivateRoute>
             }
           />
         </Routes>

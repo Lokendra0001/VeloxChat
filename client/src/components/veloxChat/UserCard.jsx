@@ -13,7 +13,7 @@ const UserCard = ({ users, setSideOpen }) => {
   return sortedUsers.map((user, index) => (
     <div
       key={index}
-      className=" flex p-2 ml-1 mt-1 cursor-pointer"
+      className=" flex p-2 ml-1 mt-1 cursor-pointer hover:bg-gray-50 dark:hover:bg-[#242424]"
       onClick={() => {
         dispatch(addselectedFriend(user));
         dispatch(removeSelectedGroup());

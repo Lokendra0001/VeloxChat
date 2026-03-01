@@ -42,6 +42,7 @@ const AuthLayout = () => {
         navigate("/");
       }, 1000);
     } catch (error) {
+      console.log(error);
       handleErrorMsg(error.response.data.message);
     } finally {
       setLoading(false);

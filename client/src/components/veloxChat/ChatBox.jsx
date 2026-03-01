@@ -11,7 +11,9 @@ import {
   Image,
   FileText,
   Smile,
+  Video,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import socket from "../../config/socket";
@@ -40,17 +42,18 @@ function ChatBox() {
 
   const { register, handleSubmit, reset, setValue, getValues, watch } =
     useForm();
+  const navigate = useNavigate();
   const [filePreview, setFilePreview] = useState(null);
   const [fileType, setFileType] = useState("");
 
   // Selected Group from State
   const selectedGroup = useSelector(
-    (state) => state.selectedGroup.selectedGroup
+    (state) => state.selectedGroup.selectedGroup,
   );
 
   // Selected Friend from State
   const selectedFriend = useSelector(
-    (state) => state.selectedFriend.selectedFriend
+    (state) => state.selectedFriend.selectedFriend,
   );
 
   // Get All Chats
@@ -155,7 +158,7 @@ function ChatBox() {
     if (isGroup)
       formData.append(
         "groupMembers",
-        JSON.stringify(selectedGroup.groupMember)
+        JSON.stringify(selectedGroup.groupMember),
       );
     formData.append("senderName", loggedInUser?.username);
     formData.append("senderProfilePic", loggedInUser?.profilePic);
@@ -189,8 +192,8 @@ function ChatBox() {
 
           setChats((prevChats) =>
             prevChats.map((msg) =>
-              msg.loading && msg._id === tempMsg._id ? chat : msg
-            )
+              msg.loading && msg._id === tempMsg._id ? chat : msg,
+            ),
           );
 
           // Emit to receiver
@@ -222,8 +225,8 @@ function ChatBox() {
 
       setChats((prevChats) =>
         prevChats.map((msg) =>
-          msg.loading && msg._id === tempMsg._id ? chat : msg
-        )
+          msg.loading && msg._id === tempMsg._id ? chat : msg,
+        ),
       );
 
       // Emit to receiver
@@ -323,11 +326,11 @@ function ChatBox() {
           ((chat?.sender_id?._id || chat?.sender_id) === loggedInUser?._id &&
             chat.receiver_id === selectedFriend?._id) ||
           (chat.receiver_id === loggedInUser?._id &&
-            (chat?.sender_id?._id || chat?.sender_id) === selectedFriend?._id)
+            (chat?.sender_id?._id || chat?.sender_id) === selectedFriend?._id),
       );
     } else if (selectedGroup) {
       filtered = chats.filter(
-        (chat) => chat.group_id?.toString() === selectedGroup._id?.toString()
+        (chat) => chat.group_id?.toString() === selectedGroup._id?.toString(),
       );
     }
 
@@ -415,9 +418,48 @@ function ChatBox() {
             )}
           </div>
         </div>
-        <button className="text-gray-500 dark:text-text-secondary hover:text-gray-700 dark:hover:text-text-primary hidden md:block">
-          <MoreVertical size={18} />
-        </button>
+
+        <div className="flex items-center gap-4 mr-2">
+          <button
+            className="text-gray-500 dark:text-text-secondary hover:text-gray-700 dark:hover:text-text-primary"
+            onClick={() => {
+              let roomId = null;
+              if (selectedGroup) {
+                roomId = selectedGroup._id;
+              } else if (selectedFriend) {
+                const ids = [loggedInUser._id, selectedFriend._id].sort();
+                roomId = ids.join("_");
+              }
+              if (roomId) {
+                const callData = {
+                  roomId,
+                  callerName: loggedInUser.username,
+                  callerProfile: loggedInUser.profilePic,
+                  receiverId: selectedGroup
+                    ? selectedGroup._id
+                    : selectedFriend._id,
+                  isGroup: !!selectedGroup,
+                  groupMembers: selectedGroup
+                    ? members.map((m) => m._id)
+                    : null,
+                  groupName: selectedGroup ? selectedGroup.groupName : null,
+                };
+                socket.emit("call-user", callData);
+                const receiverParam = selectedFriend
+                  ? `&receiver=${selectedFriend._id}`
+                  : ``;
+                navigate(`/room/${roomId}?caller=true${receiverParam}`);
+              }
+            }}
+            title="Video Call"
+          >
+            <Video size={22} />
+          </button>
+
+          <button className="text-gray-500 dark:text-text-secondary hover:text-gray-700 dark:hover:text-text-primary hidden md:block">
+            <MoreVertical size={18} />
+          </button>
+        </div>
       </div>
 
       {/* Messages */}
@@ -461,6 +503,22 @@ function ChatBox() {
         ) : (
           <>
             {messages.map((chat, index) => {
+              const msgText = chat?.message?.text || chat?.text;
+              const isEventMessage = msgText && msgText.startsWith("🎥");
+
+              if (isEventMessage) {
+                return (
+                  <div
+                    key={chat?._id || index}
+                    className="flex w-full mt-3 justify-center px-1"
+                  >
+                    <div className="bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 text-[11px] px-3 py-1 rounded-full shadow-sm font-medium flex items-center gap-1.5 border border-zinc-300 dark:border-zinc-700">
+                      <span>{msgText}</span>
+                    </div>
+                  </div>
+                );
+              }
+
               return (
                 <div
                   key={chat?._id || index}
@@ -794,7 +852,7 @@ function ChatBox() {
                   loggedInUser.username,
                   selectedGroup.groupMember,
                   selectedGroup._id,
-                  value.length
+                  value.length,
                 );
               selectedFriend && handleTyping(selectedFriend._id, value.length);
               setValue("message", value);
@@ -829,7 +887,7 @@ function ChatBox() {
                 onEmojiSelect={(emoji) => {
                   setValue(
                     "message",
-                    (getValues("message") ?? "") + emoji.native
+                    (getValues("message") ?? "") + emoji.native,
                   );
                 }}
               />

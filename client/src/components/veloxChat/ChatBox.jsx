@@ -170,9 +170,22 @@ function ChatBox() {
     }
 
     const tempMsg = {
-      ...chatObj,
+      _id: Date.now().toString(),
+      sender_id: loggedInUser._id,
+      receiver_id: isGroup ? null : selectedFriend?._id,
+      group_id: isGroup ? selectedGroup._id : null,
+      message: {
+        text: data.message || null,
+        fileName: selectedFile?.name || null,
+        fileType: selectedFile?.type || null,
+        fileUrl: previewFile,
+      },
       previewFile,
+      selectedFileName: selectedFile?.name || null,
       loading: true,
+      createdAt: new Date().toISOString(),
+      senderName: loggedInUser?.username,
+      senderProfilePic: loggedInUser?.profilePic,
     };
 
     console.log(tempMsg);
@@ -210,9 +223,14 @@ function ChatBox() {
       // AI chat: emit dynamically based on user message
       const chat = {
         _id: `ai-${Date.now()}`, // unique ID for this message
-        text: tempMsg.text, // user’s input
         sender_id: loggedInUser?._id, // logged-in user ID
         receiver_id: "000000000000000000000001", // AI ID
+        message: {
+          text: tempMsg.message.text, // user’s input
+          fileType: null,
+          fileUrl: null,
+          fileName: null,
+        },
         senderName: loggedInUser?.username, // logged-in user name
         senderProfilePic: loggedInUser?.profilePic || null,
         groupMembers: null, // null for private AI chat
@@ -302,8 +320,8 @@ function ChatBox() {
       socket.off("received-message", handleReceiveMessage);
       socket.off("friend-typing", handleFriendTyping);
       socket.off("friend-stopTyping", handleFriendStopTyping);
-      socket.on("group-typing", handleGroupTyping);
-      socket.on("group-stopTyping", handleGroupStopTyping);
+      socket.off("group-typing", handleGroupTyping);
+      socket.off("group-stopTyping", handleGroupStopTyping);
     };
   }, [selectedFriend, selectedGroup]);
 
@@ -321,17 +339,27 @@ function ChatBox() {
     console.log(chats);
     let filtered = [];
     if (selectedFriend) {
-      filtered = chats.filter(
-        (chat) =>
-          ((chat?.sender_id?._id || chat?.sender_id) === loggedInUser?._id &&
-            chat.receiver_id === selectedFriend?._id) ||
-          (chat.receiver_id === loggedInUser?._id &&
-            (chat?.sender_id?._id || chat?.sender_id) === selectedFriend?._id),
-      );
+      filtered = chats.filter((chat) => {
+        const chatSenderId = String(chat?.sender_id?._id || chat?.sender_id);
+        const chatReceiverId = String(
+          chat?.receiver_id?._id || chat.receiver_id,
+        );
+        const currentUserId = String(loggedInUser?._id);
+        const selectedFriendId = String(selectedFriend?._id);
+
+        return (
+          (chatSenderId === currentUserId &&
+            chatReceiverId === selectedFriendId) ||
+          (chatReceiverId === currentUserId &&
+            chatSenderId === selectedFriendId)
+        );
+      });
     } else if (selectedGroup) {
-      filtered = chats.filter(
-        (chat) => chat.group_id?.toString() === selectedGroup._id?.toString(),
-      );
+      filtered = chats.filter((chat) => {
+        const chatGroupId = String(chat?.group_id?._id || chat?.group_id);
+        const selectedGroupId = String(selectedGroup?._id);
+        return chatGroupId === selectedGroupId;
+      });
     }
 
     setMessages(filtered);
@@ -455,7 +483,6 @@ function ChatBox() {
           >
             <Video size={23} className="shrink-0 text-primary" /> Call
           </button>
-
         </div>
       </div>
 
@@ -568,28 +595,46 @@ function ChatBox() {
                           !chat?.message?.fileType.startsWith("video/") &&
                           !chat?.message?.fileType.startsWith("audio/") && (
                             <a
-                              href={
-                                chat?.message?.fileUrl || chat?.selectedFile[0]
-                              }
+                              href={chat?.message?.fileUrl || chat?.previewFile}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="dark:hover:bg-secondary/50 p-1 pr-5 max-w-70 sm:w-auto flex items-center gap-3 transition-all duration-200"
                             >
                               <div className="p-2 rounded-full">
-                                <FileText className="text-text-on-user-bubble dark:text-success" />
+                                <FileText
+                                  className={`${
+                                    String(
+                                      chat?.sender_id._id || chat?.sender_id,
+                                    ) === String(loggedInUser?._id)
+                                      ? "text-text-on-user-bubble"
+                                      : "text-primary"
+                                  } dark:text-success`}
+                                />
                               </div>
                               <div>
-                                <p className="font-medium text-xs line-clamp-2 text-text-on-user-bubble dark:text-text-primary">
-                                  {chat?.message?.fileName}
+                                <p
+                                  className={`font-medium text-xs line-clamp-2 ${
+                                    String(
+                                      chat?.sender_id._id || chat?.sender_id,
+                                    ) === String(loggedInUser?._id)
+                                      ? "text-text-on-user-bubble"
+                                      : "text-gray-800"
+                                  } dark:text-text-primary`}
+                                >
+                                  {chat?.message?.fileName ||
+                                    chat?.selectedFileName}
                                 </p>
-                                <p className="text-[10px] text-gray-300 dark:text-text-secondary">
+                                <p
+                                  className={`text-[10px] ${
+                                    String(
+                                      chat?.sender_id._id || chat?.sender_id,
+                                    ) === String(loggedInUser?._id)
+                                      ? "text-gray-300"
+                                      : "text-gray-500"
+                                  } dark:text-text-secondary`}
+                                >
                                   Click to open
                                 </p>
-                                {sizeError && (
-                                  <p className="text-red-500 dark:text-danger animate-pulse text-xs">
-                                    {sizeError}
-                                  </p>
-                                )}
                               </div>
                               {chat?.loading && (
                                 <div className="absolute top-1 right-2 animate-spin rounded-full h-3 w-3 border-t-2 border-primary dark:border-primary-hover"></div>
@@ -598,41 +643,43 @@ function ChatBox() {
                           )}
 
                         {/* This is For Image Media Message */}
-                        {((chat?.message?.fileType &&
-                          chat?.message?.fileType.startsWith("image/")) ||
-                          chat?.selectedFile?.type.startsWith("image/")) && (
-                          <div className="relative wf-full">
-                            <img
-                              src={chat?.message?.fileUrl || chat?.previewFile}
-                              alt="preview"
-                              className="w-70 sm:max-w-70 sm:w-auto max-h-40 h-auto object-contain rounded-sm"
-                            />
-                            {chat?.loading && (
-                              <div className="absolute inset-0 bg-black/50 grid place-items-center">
-                                <div className="animate-spin rounded-full h-7 w-7 border-t-3 border-primary dark:border-primary-hover"></div>
-                              </div>
-                            )}
-                          </div>
-                        )}
+                        {chat?.message?.fileType &&
+                          chat?.message?.fileType.startsWith("image/") && (
+                            <div className="relative wf-full">
+                              <img
+                                src={
+                                  chat?.message?.fileUrl || chat?.previewFile
+                                }
+                                alt="preview"
+                                className="w-70 sm:max-w-70 sm:w-auto max-h-40 h-auto object-contain rounded-sm"
+                              />
+                              {chat?.loading && (
+                                <div className="absolute inset-0 bg-black/50 grid place-items-center">
+                                  <div className="animate-spin rounded-full h-7 w-7 border-t-3 border-primary dark:border-primary-hover"></div>
+                                </div>
+                              )}
+                            </div>
+                          )}
 
                         {/* This is For Video Media Message */}
-                        {((chat?.message?.fileType &&
-                          chat?.message?.fileType.startsWith("video/")) ||
-                          chat?.selectedFile?.type.startsWith("video/")) && (
-                          <div className="relative">
-                            <video
-                              src={chat?.message?.fileUrl || chat?.previewFile}
-                              controls
-                              className="w-70 sm:max-w-70 max-h-40 h-auto object-cover"
-                              muted
-                            />
-                            {chat?.loading && (
-                              <div className="absolute inset-0 bg-black/50 grid place-items-center">
-                                <div className="animate-spin rounded-full h-7 w-7 border-t-3 border-primary dark:border-primary-hover"></div>
-                              </div>
-                            )}
-                          </div>
-                        )}
+                        {chat?.message?.fileType &&
+                          chat?.message?.fileType.startsWith("video/") && (
+                            <div className="relative">
+                              <video
+                                src={
+                                  chat?.message?.fileUrl || chat?.previewFile
+                                }
+                                controls
+                                className="w-70 sm:max-w-70 max-h-40 h-auto object-cover"
+                                muted
+                              />
+                              {chat?.loading && (
+                                <div className="absolute inset-0 bg-black/50 grid place-items-center">
+                                  <div className="animate-spin rounded-full h-7 w-7 border-t-3 border-primary dark:border-primary-hover"></div>
+                                </div>
+                              )}
+                            </div>
+                          )}
 
                         {/* This is For Text Message */}
                         <div className="whitespace-pre-wrap break-words max-w-full overflow-hidden">

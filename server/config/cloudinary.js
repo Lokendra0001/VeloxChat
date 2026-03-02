@@ -17,15 +17,22 @@ const storage = new CloudinaryStorage({
             resourceType = "image";
         } else if (file.mimetype.startsWith("video/")) {
             resourceType = "video";
+        } else if (file.mimetype === "application/pdf") {
+            // PDFs work best as 'auto' or 'image' in Cloudinary to allow previews and proper handling
+            resourceType = "auto";
         }
 
-        console.log("File type:", file.mimetype);
-        console.log("Cloudinary resource type:", resourceType);
+        // IMPORTANT: For 'raw' files, Cloudinary MUST have the extension in the public_id.
+        const fileName = file.originalname;
+        const public_id = `${Date.now()}-${fileName}`;
+
+        console.log(`Uploading ${fileName} as ${resourceType}`);
 
         return {
             folder: "veloxchat",
             resource_type: resourceType,
-            public_id: file.originalname.split('.')[0], // optional
+            public_id: public_id,
+            format: null,
             access_mode: "public",
         };
     },

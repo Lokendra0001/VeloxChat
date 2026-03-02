@@ -87,14 +87,21 @@ const setUpSocket = (server) => {
             // 🤖 AI USER
 
             if (receiver?.username === "Velox_AI") {
-                const aiText = await getAIResponse(msgPayload?.text);
+                // Handle both old and new message structures for robustness
+                const userText = msgPayload.text || msgPayload?.message?.text;
+                const aiResponse = await getAIResponse(userText);
 
                 const aiMessagePayload = {
-                    text: aiText,
                     sender_id: receiver_id,   // AI ID
                     receiver_id: sender_id,   // User ID
                     senderName: "Velox_AI",
                     senderProfilePic: null,
+                    message: {
+                        text: aiResponse,
+                        fileUrl: null,
+                        fileType: null,
+                        fileName: null
+                    },
                     createdAt: new Date().toISOString(),
                 };
 

@@ -105,13 +105,13 @@ const NotifcationPage = () => {
           <div className="flex items-center justify-center mt-10">
             <div className="w-8 h-8 border-4 border-teal-400 border-t-transparent rounded-full animate-spin"></div>
           </div>
-        ) : friendRequests.length === 0 ? (
+        ) : friendRequests.filter(req => req.from).length === 0 ? (
           <p className="text-text-secondary dark:text-text-secondary text-center">
             No pending requests
           </p>
         ) : (
           <div className="space-y-4">
-            {friendRequests.map((req) => (
+            {friendRequests.filter(req => req.from).map((req) => (
               <div
                 key={req._id}
                 className="bg-white dark:bg-secondary shadow-sm border border-light-border dark:border-border rounded-lg p-4 flex items-center justify-between"
@@ -119,14 +119,14 @@ const NotifcationPage = () => {
                 <div className="flex items-center gap-4">
                   <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-100 dark:bg-dark-zinc-700">
                     <img
-                      src={req.from.profilePic}
+                      src={req.from?.profilePic || "https://img.freepik.com/premium-vector/male-face-avatar-icon-set-flat-design-social-media-profiles_1281173-3806.jpg?w=740"}
                       alt="User"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div>
                     <h3 className="text-text-primary dark:text-text-primary font-medium capitalize">
-                      {req.from.username}
+                      {req.from?.username}
                     </h3>
                     <p className="text-sm text-text-secondary dark:text-text-secondary">
                       wants to connect

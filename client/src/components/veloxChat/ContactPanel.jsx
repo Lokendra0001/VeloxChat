@@ -26,7 +26,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
 
   const dispatch = useDispatch();
   const selectedFriend = useSelector(
-    (state) => state.selectedFriend.selectedFriend
+    (state) => state.selectedFriend.selectedFriend,
   );
 
   // Fetch friend list from server
@@ -65,7 +65,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
     const handleUserOffline = (userId) => {
       setFriends((prev) => {
         const updatedList = prev.map((friend) =>
-          friend._id === userId ? { ...friend, status: "offline" } : friend
+          friend._id === userId ? { ...friend, status: "offline" } : friend,
         );
 
         // Dispatch to get the correct status online or offline in chatBox
@@ -81,7 +81,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
     const handleUserOnline = (userId) => {
       setFriends((prev) => {
         const updatedList = prev.map((friend) =>
-          friend._id === userId ? { ...friend, status: "online" } : friend
+          friend._id === userId ? { ...friend, status: "online" } : friend,
         );
 
         // Dispatch to get the correct status online or offline in chatBox
@@ -112,7 +112,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
   // Filter friends based on search term
   useEffect(() => {
     const result = friends.filter((user) =>
-      user.username.toLowerCase().includes(searchTerm.toLowerCase())
+      user.username.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredFriends(result);
   }, [searchTerm, friends]);

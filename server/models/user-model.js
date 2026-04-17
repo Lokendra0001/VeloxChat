@@ -22,6 +22,11 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    role: {
+        type: String,
+        enum: ['admin', 'user'],
+        default: 'user'
+    },
     bio: {
         type: String,
         default: "Welcome to the VeloxChat here you can edit your chat!"

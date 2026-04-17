@@ -23,6 +23,28 @@ import data from "@emoji-mart/data";
 import { handleErrorMsg } from "../../config/toast";
 import { FaRegSmileBeam } from "react-icons/fa";
 import serverObj from "../../config/config";
+import { encryptMessage, decryptMessage, getSharedId } from "../../config/encryption";
+
+// Helper component for async decryption
+const DecryptedText = ({ text, sharedId }) => {
+  const [decrypted, setDecrypted] = useState("...");
+  
+  useEffect(() => {
+    const decrypt = async () => {
+      if (!text) return;
+      // If it doesn't look like base64 or is too short, show as is
+      if (text.length < 16) {
+        setDecrypted(text);
+        return;
+      }
+      const result = await decryptMessage(text, sharedId);
+      setDecrypted(result);
+    };
+    decrypt();
+  }, [text, sharedId]);
+
+  return <>{decrypted}</>;
+};
 
 function ChatBox() {
   const [chats, setChats] = useState([]);
@@ -145,121 +167,112 @@ function ChatBox() {
     }
 
     const isGroup = !!selectedGroup;
+    const sharedId = isGroup ? selectedGroup._id : getSharedId(loggedInUser._id, selectedFriend._id);
+
     // Prepare FormData
     const formData = new FormData();
 
-    if (data.message) formData.append("text", data.message);
-    if (selectedFile) formData.append("selectedFile", selectedFile);
-    if (selectedFile) formData.append("selectedFileName", selectedFile.name);
-    formData.append("sender_id", loggedInUser._id);
-    if (!isGroup) formData.append("receiver_id", selectedFriend?._id);
-    if (isGroup) formData.append("group_id", selectedGroup._id);
-    formData.append("createdAt", new Date().toISOString());
-    if (isGroup)
-      formData.append(
-        "groupMembers",
-        JSON.stringify(selectedGroup.groupMember),
-      );
-    formData.append("senderName", loggedInUser?.username);
-    formData.append("senderProfilePic", loggedInUser?.profilePic);
+    const processMessage = async () => {
+      let encryptedText = data.message;
+      if (data.message) {
+        encryptedText = await encryptMessage(data.message, sharedId);
+        formData.append("text", encryptedText);
+      }
+      
+      if (selectedFile) formData.append("selectedFile", selectedFile);
+      if (selectedFile) formData.append("selectedFileName", selectedFile.name);
+      formData.append("sender_id", loggedInUser._id);
+      if (!isGroup) formData.append("receiver_id", selectedFriend?._id);
+      if (isGroup) formData.append("group_id", selectedGroup._id);
+      formData.append("createdAt", new Date().toISOString());
+      if (isGroup)
+        formData.append(
+          "groupMembers",
+          JSON.stringify(selectedGroup.groupMember),
+        );
+      formData.append("senderName", loggedInUser?.username);
+      formData.append("senderProfilePic", loggedInUser?.profilePic);
 
-    // Create local chatObj for UI update if needed
-    const chatObj = {};
-    for (let pair of formData.entries()) {
-      chatObj[pair[0]] = pair[1];
-    }
+      // Create local chatObj for UI update if needed
+      const chatObj = {};
+      for (let pair of formData.entries()) {
+        chatObj[pair[0]] = pair[1];
+      }
 
-    const tempMsg = {
-      _id: Date.now().toString(),
-      sender_id: loggedInUser._id,
-      receiver_id: isGroup ? null : selectedFriend?._id,
-      group_id: isGroup ? selectedGroup._id : null,
-      message: {
-        text: data.message || null,
-        fileName: selectedFile?.name || null,
-        fileType: selectedFile?.type || null,
-        fileUrl: previewFile,
-      },
-      previewFile,
-      selectedFileName: selectedFile?.name || null,
-      loading: true,
-      createdAt: new Date().toISOString(),
-      senderName: loggedInUser?.username,
-      senderProfilePic: loggedInUser?.profilePic,
-    };
-
-    console.log(tempMsg);
-
-    setChats((prev) => [...prev, tempMsg]);
-
-    // Send to backend
-    // Check if the chat is with AI
-    const isAIChat = selectedFriend?._id === "000000000000000000000001";
-
-    // If not AI, store in backend
-    if (!isAIChat) {
-      axios
-        .post(`${apiKey}/chat/createMsg`, formData, { withCredentials: true })
-        .then((res) => {
-          const chat = res.data.chat;
-
-          setChats((prevChats) =>
-            prevChats.map((msg) =>
-              msg.loading && msg._id === tempMsg._id ? chat : msg,
-            ),
-          );
-
-          // Emit to receiver
-          socket.emit("send-message", {
-            ...chat,
-            senderName: chatObj.senderName,
-            senderProfilePic: chatObj.senderProfilePic,
-            groupMembers: chatObj.groupMembers,
-          });
-        })
-        .catch((err) => console.log(err.message))
-        .finally(() => setSendingLoading(false));
-    } else {
-      // AI chat: emit dynamically based on user message
-      const chat = {
-        _id: `ai-${Date.now()}`, // unique ID for this message
-        sender_id: loggedInUser?._id, // logged-in user ID
-        receiver_id: "000000000000000000000001", // AI ID
+      const tempMsg = {
+        _id: Date.now().toString(),
+        sender_id: loggedInUser._id,
+        receiver_id: isGroup ? null : selectedFriend?._id,
+        group_id: isGroup ? selectedGroup._id : null,
         message: {
-          text: tempMsg.message.text, // user’s input
-          fileType: null,
-          fileUrl: null,
-          fileName: null,
+          text: encryptedText || null,
+          fileName: selectedFile?.name || null,
+          fileType: selectedFile?.type || null,
+          fileUrl: previewFile,
         },
-        senderName: loggedInUser?.username, // logged-in user name
-        senderProfilePic: loggedInUser?.profilePic || null,
-        groupMembers: null, // null for private AI chat
-        loading: false, // AI chat already sent
+        previewFile,
+        selectedFileName: selectedFile?.name || null,
+        loading: true,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        senderName: loggedInUser?.username,
+        senderProfilePic: loggedInUser?.profilePic,
       };
 
-      console.log(chat);
+      setChats((prev) => [...prev, tempMsg]);
 
-      setChats((prevChats) =>
-        prevChats.map((msg) =>
-          msg.loading && msg._id === tempMsg._id ? chat : msg,
-        ),
-      );
+      // Send to backend
+      const isAIChat = selectedFriend?._id === "000000000000000000000001";
 
-      // Emit to receiver
-      socket.emit("send-message", {
-        ...chat,
-        senderName: chat.senderName,
-        senderProfilePic: chat.senderProfilePic,
-        groupMembers: chat.groupMembers,
-      });
-    }
+      if (!isAIChat) {
+        axios
+          .post(`${apiKey}/chat/createMsg`, formData, { withCredentials: true })
+          .then((res) => {
+            const chat = res.data.chat;
+            setChats((prevChats) =>
+              prevChats.map((msg) =>
+                msg.loading && msg._id === tempMsg._id ? chat : msg,
+              ),
+            );
+            socket.emit("send-message", {
+              ...chat,
+              senderName: chatObj.senderName,
+              senderProfilePic: chatObj.senderProfilePic,
+              groupMembers: chatObj.groupMembers,
+            });
+          })
+          .catch((err) => console.log(err.message))
+          .finally(() => setSendingLoading(false));
+      } else {
+        // AI Chat (No encryption for AI for now, or use AI's public key if available)
+        const chat = {
+          _id: `ai-${Date.now()}`,
+          sender_id: loggedInUser?._id,
+          receiver_id: "000000000000000000000001",
+          message: {
+            text: data.message, // Send plain text to AI
+            fileType: null,
+            fileUrl: null,
+            fileName: null,
+          },
+          senderName: loggedInUser?.username,
+          senderProfilePic: loggedInUser?.profilePic || null,
+          createdAt: new Date().toISOString(),
+          loading: false,
+        };
+        setChats((prevChats) =>
+          prevChats.map((msg) =>
+            msg.loading && msg._id === tempMsg._id ? chat : msg,
+          ),
+        );
+        socket.emit("send-message", chat);
+      }
+    };
 
-    // Clean up
+    processMessage();
     reset();
     setFilePreview(null);
     setFileType(null);
+    return;
   };
 
   // Clean the InputValue onChange the SelectedUser.
@@ -527,6 +540,11 @@ function ChatBox() {
         ) : (
           <>
             {messages.map((chat, index) => {
+              const chatSenderId = chat.sender_id?._id || chat.sender_id;
+              const chatReceiverId = chat.receiver_id?._id || chat.receiver_id;
+              const chatGroupId = chat.group_id?._id || chat.group_id;
+              const msgSharedId = chatGroupId ? chatGroupId : getSharedId(chatSenderId, chatReceiverId);
+
               const msgText = chat?.message?.text || chat?.text;
               const isEventMessage = msgText && msgText.startsWith("🎥");
 
@@ -683,7 +701,7 @@ function ChatBox() {
 
                         {/* This is For Text Message */}
                         <div className="whitespace-pre-wrap break-words max-w-full overflow-hidden">
-                          {chat?.message?.text || chat?.text}
+                          <DecryptedText text={chat?.message?.text || chat?.text} sharedId={msgSharedId} />
                         </div>
                       </span>
                     </div>

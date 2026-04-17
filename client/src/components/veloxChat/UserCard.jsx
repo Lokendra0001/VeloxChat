@@ -23,7 +23,7 @@ const UserCard = ({ users, setSideOpen }) => {
       {/* User ProfilePic */}
       <div className="sm:h-8 sm:w-8 h-9 w-9 relative grid place-items-center overflow-hidden">
         <img
-          src={user.profilePic}
+          src={user?.profilePic || "https://img.freepik.com/premium-vector/male-face-avatar-icon-set-flat-design-social-media-profiles_1281173-3806.jpg?w=740"}
           alt="User Img"
           className="h-full w-full rounded-full object-cover overflow-hidden"
         />

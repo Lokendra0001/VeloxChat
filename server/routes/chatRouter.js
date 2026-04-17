@@ -7,5 +7,5 @@ router.post('/createMsg', upload.single("selectedFile"), handleCreateMsg);
 
 router.get('/getAllChats', handleGetAllChats);
 
-router.post
+
 module.exports = router;

@@ -7,6 +7,7 @@ const mongoConnection = require('./config/mongoose');
 const setUpSocket = require('./socket');
 const userRouter = require('./routes/userRouter');
 const chatRouter = require('./routes/chatRouter');
+const adminRouter = require('./routes/adminRouter');
 const contactRouter = require('./routes/contactRequestRouter');
 const groupRouter = require('./routes/groupRouter')
 const app = express();
@@ -33,5 +34,6 @@ app.use('/user', userRouter);
 app.use('/chat', chatRouter)
 app.use('/contact', contactRouter)
 app.use('/group', groupRouter)
+app.use('/admin', adminRouter)
 
 server.listen(PORT, () => console.log("Server Started At 3000."))

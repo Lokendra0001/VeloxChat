@@ -27,7 +27,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("themes");
   const [selectedTheme, setSelectedTheme] = useState(
-    localStorage.getItem("secondaryTheme") || "teal"
+    localStorage.getItem("secondaryTheme") || "teal",
   );
 
   const joinedDate = new Date(user.createdAt).toLocaleDateString("en-US", {

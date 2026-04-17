@@ -18,7 +18,7 @@ import { removeSelectedGroup } from "../../store/slices/selectedGroupSlice";
 const Header = ({ onAddContact }) => {
   const dispatch = useDispatch();
   const [isDark, setIsDark] = useState(
-    localStorage.getItem("theme") === "dark"
+    localStorage.getItem("theme") === "dark",
   );
 
   useEffect(() => {

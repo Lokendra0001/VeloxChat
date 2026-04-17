@@ -7,6 +7,7 @@ const generateTokenAndSetCookie = (res, user) => {
         _id: user._id,
         username: user.username,
         email: user.email,
+        role: user.role,
     }
     const token = jwt.sign(payload, secretKey);
 

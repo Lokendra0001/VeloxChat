@@ -177,7 +177,7 @@ const AddContact = ({ status, onCloseAddContact }) => {
                 {/* Profile */}
                 <div className="relative h-10 w-10">
                   <img
-                    src={user.profilePic}
+                    src={user?.profilePic || "https://img.freepik.com/premium-vector/male-face-avatar-icon-set-flat-design-social-media-profiles_1281173-3806.jpg?w=740"}
                     alt="User"
                     className="w-full h-full rounded-full object-cover"
                   />

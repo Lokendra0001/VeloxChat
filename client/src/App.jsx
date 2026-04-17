@@ -1,5 +1,6 @@
 import AuthLayout from "./pages/AuthLayout";
 import { BrowserRouter, Route, RouterProvider, Routes } from "react-router-dom";
+import Admin from "./pages/Admin";
 import Home from "./pages/Home";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -7,6 +8,7 @@ import serverObj from "./config/config";
 import { useDispatch } from "react-redux";
 import { addUser } from "./store/slices/authSlice";
 import PrivateRoute from "./components/common/PrivateRoute";
+import AdminRoute from "./components/common/AdminRoute";
 import PublicRoute from "./components/common/PublicRoute";
 import NotifcationPage from "./pages/NotifcationPage";
 import Profile from "./pages/Profile";
@@ -36,6 +38,10 @@ const App = () => {
         toast(`Welcome Back ${res.data.username}`, {
           icon: "👏",
         });
+        // Auto-redirect admin to admin panel
+        if (res.data.role === "admin" && window.location.pathname === "/") {
+          window.location.href = "/admin";
+        }
       })
       .catch((err) => console.log(err.response.message))
       .finally(() => setTimeout(() => setLoading(false), 1000));
@@ -129,7 +135,15 @@ const App = () => {
               </PrivateRoute>
             }
           />
-        </Routes>
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
+            }
+          />
+          </Routes>
       </BrowserRouter>
       <Toaster
         position="top-center"

@@ -24,6 +24,8 @@ import { handleErrorMsg } from "../../config/toast";
 import { FaRegSmileBeam } from "react-icons/fa";
 import serverObj from "../../config/config";
 import { encryptMessage, decryptMessage, getSharedId } from "../../config/encryption";
+import { removeselectedFriend } from "../../store/slices/selectedFriendSlice";
+import { useDispatch } from "react-redux";
 
 // Helper component for async decryption
 const DecryptedText = ({ text, sharedId }) => {
@@ -61,6 +63,9 @@ function ChatBox() {
   const apiKey = serverObj.apikey;
   const [sizeError, setSizeError] = useState(null);
   const [sendingLoading, setSendingLoading] = useState(false);
+  const videoCallEnabled = useSelector((state) => state.settings.features.videoCall);
+  const aiChatEnabled = useSelector((state) => state.settings.features.aiChat);
+  const dispatch = useDispatch();
 
   const { register, handleSubmit, reset, setValue, getValues, watch } =
     useForm();
@@ -278,7 +283,12 @@ function ChatBox() {
   // Clean the InputValue onChange the SelectedUser.
   useEffect(() => {
     setValue("message");
-  }, [selectedFriend]);
+    
+    // Kick out of AI chat if disabled
+    if (!aiChatEnabled && selectedFriend?._id === "000000000000000000000001") {
+      dispatch(removeselectedFriend());
+    }
+  }, [selectedFriend, aiChatEnabled]);
 
   // Handle receiving message
   useEffect(() => {
@@ -461,41 +471,43 @@ function ChatBox() {
         </div>
 
         <div className="flex items-center gap-4 mr-10 md:mr-2">
-          <button
-            className="text-gray-500 dark:text-text-secondary hover:text-gray-700 dark:hover:text-text-primary cursor-pointer flex items-center gap-2 bg-primary/10 dark:bg-secondary p-2 rounded-md hover:bg-primary/20 dark:hover:bg-secondary/20 transition-colors text-sm font-semibold text-primary dark:text-primary-hover"
-            onClick={() => {
-              let roomId = null;
-              if (selectedGroup) {
-                roomId = selectedGroup._id;
-              } else if (selectedFriend) {
-                const ids = [loggedInUser._id, selectedFriend._id].sort();
-                roomId = ids.join("_");
-              }
-              if (roomId) {
-                const callData = {
-                  roomId,
-                  callerName: loggedInUser.username,
-                  callerProfile: loggedInUser.profilePic,
-                  receiverId: selectedGroup
-                    ? selectedGroup._id
-                    : selectedFriend._id,
-                  isGroup: !!selectedGroup,
-                  groupMembers: selectedGroup
-                    ? members.map((m) => m._id)
-                    : null,
-                  groupName: selectedGroup ? selectedGroup.groupName : null,
-                };
-                socket.emit("call-user", callData);
-                const receiverParam = selectedFriend
-                  ? `&receiver=${selectedFriend._id}`
-                  : ``;
-                navigate(`/room/${roomId}?caller=true${receiverParam}`);
-              }
-            }}
-            title="Video Call"
-          >
-            <Video size={23} className="shrink-0 text-primary" /> Call
-          </button>
+          {videoCallEnabled && (
+            <button
+              className="text-gray-500 dark:text-text-secondary hover:text-gray-700 dark:hover:text-text-primary cursor-pointer flex items-center gap-2 bg-primary/10 dark:bg-secondary p-2 rounded-md hover:bg-primary/20 dark:hover:bg-secondary/20 transition-colors text-sm font-semibold text-primary dark:text-primary-hover"
+              onClick={() => {
+                let roomId = null;
+                if (selectedGroup) {
+                  roomId = selectedGroup._id;
+                } else if (selectedFriend) {
+                  const ids = [loggedInUser._id, selectedFriend._id].sort();
+                  roomId = ids.join("_");
+                }
+                if (roomId) {
+                  const callData = {
+                    roomId,
+                    callerName: loggedInUser.username,
+                    callerProfile: loggedInUser.profilePic,
+                    receiverId: selectedGroup
+                      ? selectedGroup._id
+                      : selectedFriend._id,
+                    isGroup: !!selectedGroup,
+                    groupMembers: selectedGroup
+                      ? members.map((m) => m._id)
+                      : null,
+                    groupName: selectedGroup ? selectedGroup.groupName : null,
+                  };
+                  socket.emit("call-user", callData);
+                  const receiverParam = selectedFriend
+                    ? `&receiver=${selectedFriend._id}`
+                    : ``;
+                  navigate(`/room/${roomId}?caller=true${receiverParam}`);
+                }
+              }}
+              title="Video Call"
+            >
+              <Video size={23} className="shrink-0 text-primary" /> Call
+            </button>
+          )}
         </div>
       </div>
 

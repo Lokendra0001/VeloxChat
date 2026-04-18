@@ -11,12 +11,17 @@ import {
   LayoutDashboard,
   Menu,
   LogOut,
-  User as UserIcon,
   RefreshCw,
   MessageSquareText,
+  Settings as SettingsIcon,
+  User as UserIcon,
+  Sun,
+  Bot,
+  Video as VideoIcon,
 } from "lucide-react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { removeUser } from "../store/slices/authSlice";
+import { setSettings, updateFeature } from "../store/slices/settingsSlice";
 import {
   XAxis,
   YAxis,
@@ -42,6 +47,7 @@ const Admin = () => {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [activeView, setActiveView] = useState("dashboard");
+  const settings = useSelector((state) => state.settings);
   const currentUser = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -165,7 +171,7 @@ const Admin = () => {
       {/* Sidebar */}
       <aside className="w-56 bg-[#1F2937] flex-shrink-0 flex flex-col dark:bg-zinc-900 border-r border-slate-200 dark:border-zinc-800">
         <div className="p-5 flex items-center gap-2 border-b border-white/5">
-          <div className="w-7 h-7 bg-indigo-600 rounded flex items-center justify-center text-white font-bold">
+          <div className="w-7 h-7 bg-primary rounded flex items-center justify-center text-white font-bold">
             V
           </div>
           <span className="text-white text-lg font-semibold">VeloxAdmin</span>
@@ -176,7 +182,7 @@ const Admin = () => {
             <li>
               <button
                 onClick={() => setActiveView("dashboard")}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors text-sm ${activeView === "dashboard" ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors text-sm ${activeView === "dashboard" ? "bg-primary text-white" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
               >
                 <LayoutDashboard size={18} />
                 <span>Dashboard</span>
@@ -185,10 +191,19 @@ const Admin = () => {
             <li>
               <button
                 onClick={() => setActiveView("users")}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors text-sm ${activeView === "users" ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors text-sm ${activeView === "users" ? "bg-primary text-white" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
               >
                 <UsersIcon size={18} />
                 <span>Users</span>
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setActiveView("features")}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors text-sm ${activeView === "features" ? "bg-primary text-white" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
+              >
+                <SettingsIcon size={18} />
+                <span>Features</span>
               </button>
             </li>
           </ul>
@@ -232,7 +247,7 @@ const Admin = () => {
               <p className="text-xs font-semibold text-slate-700 dark:text-zinc-200">
                 {currentUser?.username}
               </p>
-              <p className="text-[10px] text-indigo-500 uppercase font-medium">
+              <p className="text-[10px] text-primary uppercase font-medium">
                 {currentUser?.role}
               </p>
             </div>
@@ -260,7 +275,7 @@ const Admin = () => {
               {/* Minimal Stats Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-white dark:bg-zinc-900 p-5 rounded-lg border border-slate-200 dark:border-zinc-800 flex items-center gap-4 shadow-sm">
-                  <div className="p-3 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 rounded-md">
+                  <div className="p-3 bg-other-bubble dark:bg-primary/10 text-primary rounded-md">
                     <MessageSquareText size={20} />
                   </div>
                   <div>
@@ -419,7 +434,7 @@ const Admin = () => {
                 </div>
               </div>
             </div>
-          ) : (
+          ) : activeView === "users" ? (
             <div className="space-y-6 animate-in slide-in-from-bottom-2 duration-300">
               <div className="flex items-center justify-between">
                 <div>
@@ -432,7 +447,7 @@ const Admin = () => {
                 </div>
                 <button
                   onClick={fetchData}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-semibold uppercase px-4 py-2 rounded transition-colors flex items-center gap-2"
+                  className="bg-primary hover:bg-primary-hover text-white text-[10px] font-semibold uppercase px-4 py-2 rounded transition-colors flex items-center gap-2"
                 >
                   <RefreshCw size={12} />
                   Refresh
@@ -481,7 +496,7 @@ const Admin = () => {
                               onChange={(e) =>
                                 updateRole(u._id, e.target.value)
                               }
-                              className="bg-transparent border border-slate-200 dark:border-zinc-700 px-2 py-1 rounded text-[10px] font-medium transition-colors focus:border-indigo-600 outline-none"
+                              className="bg-transparent border border-slate-200 dark:border-zinc-700 px-2 py-1 rounded text-[10px] font-medium transition-colors focus:border-primary outline-none"
                             >
                               <option value="user">User</option>
                               <option value="admin">Admin</option>
@@ -500,6 +515,145 @@ const Admin = () => {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6 animate-in slide-in-from-bottom-2 duration-300">
+              <div>
+                <h1 className="text-xl font-semibold text-slate-800 dark:text-white">
+                  Application Features
+                </h1>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Enable or disable global platform modules
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Theme Toggle Card */}
+                <div className="bg-white dark:bg-zinc-900 rounded-xl p-5 border border-slate-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between h-44 hover:border-primary transition-colors group">
+                  <div className="flex items-start justify-between">
+                    <div className="p-2.5 bg-other-bubble dark:bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
+                      <Sun size={24} />
+                    </div>
+                    <button
+                      onClick={() => {
+                        const newValue = !settings.features.themeToggle;
+                        axios
+                          .patch(
+                            `${serverObj.apikey}/admin/settings`,
+                            { features: { themeToggle: newValue } },
+                            { withCredentials: true },
+                          )
+                          .then((res) => {
+                            dispatch(setSettings(res.data));
+                            toast.success(
+                              `Theme toggle ${newValue ? "enabled" : "disabled"}`,
+                            );
+                          })
+                          .catch(() =>
+                            toast.error("Failed to update settings"),
+                          );
+                      }}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${settings.features.themeToggle ? "bg-primary" : "bg-slate-300 dark:bg-zinc-700"}`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.features.themeToggle ? "translate-x-6" : "translate-x-1"}`}
+                      />
+                    </button>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-800 dark:text-zinc-100">
+                      Appearance Toggle
+                    </h3>
+                    <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                      Allow users to switch between Light and Dark themes across the platform.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Calling Card */}
+                <div className="bg-white dark:bg-zinc-900 rounded-xl p-5 border border-slate-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between h-44 hover:border-primary transition-colors group">
+                  <div className="flex items-start justify-between">
+                    <div className="p-2.5 bg-other-bubble dark:bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
+                      <VideoIcon size={24} />
+                    </div>
+                    <button
+                      onClick={() => {
+                        const newValue = !settings.features.videoCall;
+                        axios
+                          .patch(
+                            `${serverObj.apikey}/admin/settings`,
+                            { features: { videoCall: newValue } },
+                            { withCredentials: true },
+                          )
+                          .then((res) => {
+                            dispatch(setSettings(res.data));
+                            toast.success(
+                              `Calling ${newValue ? "enabled" : "disabled"}`,
+                            );
+                          })
+                          .catch(() =>
+                            toast.error("Failed to update settings"),
+                          );
+                      }}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${settings.features.videoCall ? "bg-primary" : "bg-slate-300 dark:bg-zinc-700"}`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.features.videoCall ? "translate-x-6" : "translate-x-1"}`}
+                      />
+                    </button>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-800 dark:text-zinc-100">
+                      Media Calling
+                    </h3>
+                    <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                      Enable real-time Video and Audio calls for individuals and groups.
+                    </p>
+                  </div>
+                </div>
+
+                {/* AI Chat Card */}
+                <div className="bg-white dark:bg-zinc-900 rounded-xl p-5 border border-slate-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between h-44 hover:border-primary transition-colors group">
+                  <div className="flex items-start justify-between">
+                    <div className="p-2.5 bg-other-bubble dark:bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
+                      <Bot size={24} />
+                    </div>
+                    <button
+                      onClick={() => {
+                        const newValue = !settings.features.aiChat;
+                        axios
+                          .patch(
+                            `${serverObj.apikey}/admin/settings`,
+                            { features: { aiChat: newValue } },
+                            { withCredentials: true },
+                          )
+                          .then((res) => {
+                            dispatch(setSettings(res.data));
+                            toast.success(
+                              `AI Chat ${newValue ? "enabled" : "disabled"}`,
+                            );
+                          })
+                          .catch(() =>
+                            toast.error("Failed to update settings"),
+                          );
+                      }}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${settings.features.aiChat ? "bg-primary" : "bg-slate-300 dark:bg-zinc-700"}`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.features.aiChat ? "translate-x-6" : "translate-x-1"}`}
+                      />
+                    </button>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-800 dark:text-zinc-100">
+                      VeloxAI Assistant
+                    </h3>
+                    <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                      Intelligent assistant capable of answering questions and providing help.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

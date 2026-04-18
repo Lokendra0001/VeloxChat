@@ -3,6 +3,7 @@ const checkAuthentication = require('../middleware/auth');
 const checkAdmin = require('../middleware/role');
 const Users = require('../models/user-model');
 const Chats = require('../models/chat-model');
+const Settings = require('../models/settings-model');
 
 const router = Router();
 
@@ -83,6 +84,36 @@ router.delete('/users/:id', checkAuthentication, checkAdmin, async (req, res) =>
     const user = await Users.findByIdAndDelete(id);
     if (!user) return res.status(404).json({ message: 'User not found' });
     res.status(200).json({ message: 'User deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get application settings (accessible by anyone)
+router.get('/settings', async (req, res) => {
+  try {
+    let settings = await Settings.findOne();
+    if (!settings) {
+      settings = await Settings.create({ features: { themeToggle: true, videoCall: true, aiChat: true } });
+    }
+    res.status(200).json(settings);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update application settings (admin only)
+router.patch('/settings', checkAuthentication, checkAdmin, async (req, res) => {
+  try {
+    const { features } = req.body;
+    let settings = await Settings.findOne();
+    if (!settings) {
+      settings = new Settings({ features });
+    } else {
+      settings.features = { ...settings.features, ...features };
+    }
+    await settings.save();
+    res.status(200).json(settings);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

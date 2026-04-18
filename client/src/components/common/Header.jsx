@@ -10,13 +10,14 @@ import {
   Plus,
   SunMedium,
 } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { removeselectedFriend } from "../../store/slices/selectedFriendSlice";
 import { BsMoonStars } from "react-icons/bs";
 import { removeSelectedGroup } from "../../store/slices/selectedGroupSlice";
 
 const Header = ({ onAddContact }) => {
   const dispatch = useDispatch();
+  const themeToggle = useSelector((state) => state.settings.features.themeToggle);
   const [isDark, setIsDark] = useState(
     localStorage.getItem("theme") === "dark",
   );
@@ -62,23 +63,26 @@ const Header = ({ onAddContact }) => {
           >
             <Plus size={20} />
           </button>
-          <button
-            className="text-zinc-700 dark:text-text-normal cursor-pointer rounded-full p-1 transition-colors mr-9 md:mr-0 font-normal"
-            title="Switch Dark/Light"
-            onClick={() => setIsDark(!isDark)}
-          >
-            <span
-              className={`flex items-center justify-center w-6 h-6 transition-transform duration-300 ease-in-out ${
-                isDark ? "rotate-20" : "rotate-0"
-              }`}
+
+          {themeToggle && (
+            <button
+              className="text-zinc-700 dark:text-text-normal cursor-pointer rounded-full p-1 transition-colors mr-9 md:mr-0 font-normal"
+              title="Switch Dark/Light"
+              onClick={() => setIsDark(!isDark)}
             >
-              {!isDark ? (
-                <SunMedium size={20} />
-              ) : (
-                <MoonStar size={20} className="scale-[0.85]" />
-              )}
-            </span>
-          </button>
+              <span
+                className={`flex items-center justify-center w-6 h-6 transition-transform duration-300 ease-in-out ${
+                  isDark ? "rotate-20" : "rotate-0"
+                }`}
+              >
+                {!isDark ? (
+                  <SunMedium size={20} />
+                ) : (
+                  <MoonStar size={20} className="scale-[0.85]" />
+                )}
+              </span>
+            </button>
+          )}
         </div>
       </nav>
     </div>

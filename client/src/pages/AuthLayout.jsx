@@ -39,7 +39,11 @@ const AuthLayout = () => {
       dispatch(addUser(res.data.user));
       handleSuccessMsg(res.data.message);
       setTimeout(() => {
-        navigate("/");
+        if (res.data.user.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       }, 1000);
     } catch (error) {
       console.log(error);
@@ -58,7 +62,11 @@ const AuthLayout = () => {
       dispatch(addUser(res.data.user));
       handleSuccessMsg(res.data.message);
       setTimeout(() => {
-        navigate("/");
+        if (res.data.user.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       }, 1000);
     } catch (error) {
       handleErrorMsg(error.response.data.message);

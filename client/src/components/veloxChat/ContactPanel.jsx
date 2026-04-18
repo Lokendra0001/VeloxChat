@@ -23,6 +23,7 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
   const [notify, setNotify] = useState(false);
   const apiKey = serverObj.apikey;
   const loggedInUser = useSelector((state) => state.auth.user);
+  const aiChatEnabled = useSelector((state) => state.settings.features.aiChat);
 
   const dispatch = useDispatch();
   const selectedFriend = useSelector(
@@ -109,13 +110,19 @@ function ContactsPanel({ isSideOpen, setSideOpen }) {
     };
   }, []);
 
-  // Filter friends based on search term
+  // Filter friends based on search term and AI setting
   useEffect(() => {
-    const result = friends.filter((user) =>
+    let result = friends.filter((user) =>
       user.username.toLowerCase().includes(searchTerm.toLowerCase()),
     );
+    
+    // Filter out AI if disabled
+    if (!aiChatEnabled) {
+      result = result.filter(user => user._id !== "000000000000000000000001");
+    }
+    
     setFilteredFriends(result);
-  }, [searchTerm, friends]);
+  }, [searchTerm, friends, aiChatEnabled]);
 
   return (
     <>

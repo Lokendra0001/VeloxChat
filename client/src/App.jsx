@@ -12,6 +12,7 @@ import AdminRoute from "./components/common/AdminRoute";
 import PublicRoute from "./components/common/PublicRoute";
 import NotifcationPage from "./pages/NotifcationPage";
 import Profile from "./pages/Profile";
+import { setSettings } from "./store/slices/settingsSlice";
 import socket from "./config/socket";
 import { useSelector } from "react-redux";
 import { Toaster, toast } from "react-hot-toast";
@@ -45,6 +46,14 @@ const App = () => {
       })
       .catch((err) => console.log(err.response.message))
       .finally(() => setTimeout(() => setLoading(false), 1000));
+
+    // Fetch global settings
+    axios
+      .get(`${serverObj.apikey}/admin/settings`)
+      .then((res) => {
+        dispatch(setSettings(res.data));
+      })
+      .catch((err) => console.error("Error fetching settings:", err));
   }, []);
 
   useEffect(() => {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import socket from "../../config/socket";
 import { Phone, PhoneOff } from "lucide-react";
@@ -9,6 +10,7 @@ const CallListener = () => {
   const navigate = useNavigate();
   const [incomingCall, setIncomingCall] = useState(null);
   const audioRef = useRef(null);
+  const videoCallEnabled = useSelector((state) => state.settings.features.videoCall);
 
   // 🔥 STOP RING FUNCTION
   const stopRinging = () => {
@@ -43,6 +45,7 @@ const CallListener = () => {
   // 🔥 SOCKET LISTENER
   useEffect(() => {
     const handleIncomingCall = (data) => {
+      if (!videoCallEnabled) return; // Ignore if feature is disabled
       console.log("Incoming call:", data);
       setIncomingCall(data);
     };
